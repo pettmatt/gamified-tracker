@@ -2,21 +2,47 @@
 import icon from "../assets/svelte.svg"
 import * as L from "leaflet"
 import "leaflet/dist/leaflet.css"
-import MarkerPopup from './MarkerPopup.svelte'
+
+export let valueArray: Array<boolean>
 let map: any
+let currentLocation: any
+let waypointMarkers: any
 
 const createMap = (container: any) => {
-    let m = L.map(container).setView([51.505, -0.09], 13)
+    let map = L.map(container).setView([51.505, -0.09], 13)
     L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
         {
             attribution: `&copy;<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>,&copy;<a href="https://carto.com/attributions" target="_blank">CARTO</a>`,
             subdomains: 'abcd',
-            maxZoom: 14,
+            maxZoom: 20,
         }
-    ).addTo(m)
+    ).addTo(map)
 
-    return m
+    // const popup = L.popup()
+
+    // function onMapClick(e) {
+    //     popup
+    //         .setLatLng(e.latlng)
+    //         .setContent("You clicked the map at " + e.latlng.toString())
+    //         .openOn(map);
+    // }
+
+    // map.on('click', onMapClick)
+
+    map.locate({setView: true, maxZoom: 16})
+    map.on("locationfound", (e) => {
+        const radius = e.accuracy
+
+        L.marker(e.latlng).addTo(map)
+            .bindPopup("Your location is within " + radius + " meters")
+            .openPopup()
+    })
+    map.on("locationerror", (e) => {
+        console.warn(e.message)
+    })
+
+    return map
 }
 
 const mapAction = (container: any) => {
@@ -32,6 +58,7 @@ const resizeMap = () => {
     if (map) map.invalidateSize()
 }
 
+console.log(valueArray)
 </script>
 
 <svelte:window on:resize={resizeMap} />
@@ -42,4 +69,4 @@ const resizeMap = () => {
         crossorigin="" />
 </svelte:head>
 
-<div id="leaf-map" style="width: 100%; height: 100%; background-color: #333;" use:mapAction />
+<div id="leaf-map" style="width: 100%; height: 94%; background-color: #333;" use:mapAction />
