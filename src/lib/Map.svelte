@@ -5,8 +5,9 @@ import "leaflet/dist/leaflet.css"
 
 export let valueArray: Array<boolean>
 let map: any
-let currentLocation: any
-let waypointMarkers: any
+
+let currentLocation: Array<number>
+let waypointMarkers: Array<Array<number>> = []
 
 const createMap = (container: any) => {
     let map = L.map(container).setView([51.505, -0.09], 13)
@@ -30,6 +31,19 @@ const createMap = (container: any) => {
 
     // map.on('click', onMapClick)
 
+    // Put marker down on click
+    const placeMarker = (e) => {
+        const marker = L.marker()
+        const coordinates = e.latlng
+        marker.setLatLng(coordinates).addTo(map)
+
+        waypointMarkers.push(marker)
+        console.log(waypointMarkers)
+    }
+
+    map.on("click", (true) && placeMarker)
+
+    // Locate user
     map.locate({setView: true, maxZoom: 16})
     map.on("locationfound", (e) => {
         const radius = e.accuracy
