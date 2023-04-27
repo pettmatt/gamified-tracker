@@ -9,7 +9,9 @@ let map: any
 let currentLocation: Array<number>
 let waypointMarkers: Array<Array<number>> = []
 let waypointCoordinates: Array<Array<number>> = []
-let polyline: any = null
+let trackingCoordinates: Array<Array<number>> = []
+let plannedPolyline: any = null
+let trackingPolyline: any = null
 
 const createMap = (container: any) => {
     let map = L.map(container).setView([51.505, -0.09], 13)
@@ -42,38 +44,65 @@ const createMap = (container: any) => {
         waypointMarkers.push(marker) // Used to get easily access to the markers
         waypointCoordinates.push(coordinates) // Used to get easily the coordinates
 
-        drawLine(waypointCoordinates)
+        drawLine(waypointCoordinates, "plan")
+        closeTheRoute(waypointCoordinates)
     }
 
     map.on("click", (true) && placeMarker)
 
     // Draw a line from marker to marker
-    const drawLine = (coordinates: Array<Array<number>>) => {
+    const drawLine = (coordinates: Array<Array<number>>, lineType: string = "plan" || "track") => {
         if (coordinates.length < 2) return
 
-        polyline = L.polyline(coordinates).addTo(map)
+        // Reset polyline, so the previous values won't become a problem
+        if (lineType === "plan")
+            plannedPolyline = L.polyline(coordinates).addTo(map)
+        else if (lineType === "track")
+            trackingPolyline = L.polyline(coordinates).addTo(map)
 
-        if (coordinates.length > 2)
-            closeTheRoute(coordinates)
+        console.log("POLY", plannedPolyline)
+        console.log("POLY 2", trackingPolyline)
     }
 
     const closeTheRoute = (coordinates: Array<Array<number>>) => {
         // Makes the route "loopable", bringing the user back to the starting point.
-        polyline = L.polyline([ ...coordinates, coordinates[0] ]).addTo(map)
+        if (coordinates.length > 2)
+            plannedPolyline = L.polyline([ ...coordinates, coordinates[0] ]).addTo(map)
     }
 
     // Locate user
     map.locate({setView: true, maxZoom: 16})
-    map.on("locationfound", (e: any) => {
-        const radius = e.accuracy
 
-        L.marker(e.latlng).addTo(map)
-            .bindPopup("Your location is within " + radius + " meters")
-            .openPopup()
+    map.on("locationfound", (e: any) => {
+        currentLocation = L.marker()
+
+        // Locate and show user's location immediately
+        locateUser(e)
+
+        let trackingInterval = setInterval(() => {
+            // Now update the location every 5 seconds
+            locateUser(e)
+        }, 5000)
+
+        // Tracking can be stopped manually.
+        // Going to be added later.
     })
-    map.on("locationerror", (e) => {
+
+    map.on("locationerror", (e: any) => {
         console.warn(e.message)
     })
+
+    const locateUser = (e: any) => {
+        const radius = e.accuracy
+
+        // Ignore following error message "Property 'setLatLng' does not exist on type 'number[]'"
+        // it's just the editor messing up.
+        currentLocation.setLatLng(e.latlng).addTo(map)
+            .bindPopup("Your location is within " + radius + " meters")
+
+        trackingCoordinates.push(currentLocation.getLatLng())
+        drawLine(trackingCoordinates, "track")
+    }
 
     return map
 }
