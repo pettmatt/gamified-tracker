@@ -8,6 +8,8 @@ let map: any
 
 let currentLocation: Array<number>
 let waypointMarkers: Array<Array<number>> = []
+let waypointCoordinates: Array<Array<number>> = []
+let polyline: any = null
 
 const createMap = (container: any) => {
     let map = L.map(container).setView([51.505, -0.09], 13)
@@ -32,20 +34,37 @@ const createMap = (container: any) => {
     // map.on('click', onMapClick)
 
     // Put marker down on click
-    const placeMarker = (e) => {
+    const placeMarker = (e: any) => {
         const marker = L.marker()
         const coordinates = e.latlng
         marker.setLatLng(coordinates).addTo(map)
 
-        waypointMarkers.push(marker)
-        console.log(waypointMarkers)
+        waypointMarkers.push(marker) // Used to get easily access to the markers
+        waypointCoordinates.push(coordinates) // Used to get easily the coordinates
+
+        drawLine(waypointCoordinates)
     }
 
     map.on("click", (true) && placeMarker)
 
+    // Draw a line from marker to marker
+    const drawLine = (coordinates: Array<Array<number>>) => {
+        if (coordinates.length < 2) return
+
+        polyline = L.polyline(coordinates).addTo(map)
+
+        if (coordinates.length > 2)
+            closeTheRoute(coordinates)
+    }
+
+    const closeTheRoute = (coordinates: Array<Array<number>>) => {
+        // Makes the route "loopable", bringing the user back to the starting point.
+        polyline = L.polyline([ ...coordinates, coordinates[0] ]).addTo(map)
+    }
+
     // Locate user
     map.locate({setView: true, maxZoom: 16})
-    map.on("locationfound", (e) => {
+    map.on("locationfound", (e: any) => {
         const radius = e.accuracy
 
         L.marker(e.latlng).addTo(map)
