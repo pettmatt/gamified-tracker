@@ -1,25 +1,28 @@
 <script lang="ts">
-import ToggleButton from "./components/ToggleButton.svelte"
+    import { sessionStartStatus, traveledDistance, placeMarkersStatus } from "../stores/hud-store"
+    import ToggleButton from "./components/ToggleButton.svelte"
 
-export let valueArray: Array<boolean>
-export let traveledDistance: number
-export let sessionStarted: boolean
+    let unit = "m"
 
-let unit = "m"
+    const buttonArray = [
+        { function: sessionStartStatus.update(value => !value), label: "Start" },
+        { function: placeMarkersStatus.update(value => !value), label: "Plan" },
+    ]
+
 </script>
 
 <div id="interface-hud">
-    {#each valueArray as value, index}
-        {#if valueArray.length / 2 == index}
-            {#if sessionStarted}
+    {#each buttonArray as button, index}
+        {#if buttonArray.length / 2 == index}
+            {#if $sessionStartStatus}
                 <div id="travel-distance-container">
-                    <b>{traveledDistance} {unit}</b>
+                    <b>{$traveledDistance} {unit}</b>
                 </div>
-            {:else}
-                <ToggleButton value={sessionStarted} label={"Start"} />
+            <!-- {:else}
+                <ToggleButton onClickFunction={toggleSessionStatus} label={"Start"} /> -->
             {/if}
         {/if}
-        <ToggleButton value={value} label={"Button"} />
+        <ToggleButton onClickFunction={() => button.function} label={button.label} />
     {/each}
 </div>
 

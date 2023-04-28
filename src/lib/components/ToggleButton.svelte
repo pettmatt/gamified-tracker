@@ -1,11 +1,6 @@
 <script lang="ts">
-export let value: boolean
-export let label: string
-
-const toggleValue = () => {
-    value = !value
-    console.log(value)
-}
+    export let onClickFunction: Function 
+    export let label: string
 </script>
 
-<button on:click={toggleValue}>{label}</button>
+<button on:click={() => onClickFunction()}>{label}</button>
