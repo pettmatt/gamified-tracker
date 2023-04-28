@@ -1,12 +1,11 @@
 <script lang="ts">
     import { sessionStartStatus, traveledDistance, placeMarkersStatus } from "../stores/hud-store"
-    import ToggleButton from "./components/ToggleButton.svelte"
 
     let unit = "m"
 
     const buttonArray = [
-        { function: sessionStartStatus.update(value => !value), label: "Start" },
-        { function: placeMarkersStatus.update(value => !value), label: "Plan" },
+        { function: () => sessionStartStatus.set(!$sessionStartStatus), label: "Start" },
+        { function: () => placeMarkersStatus.set(!$placeMarkersStatus), label: "Plan" },
     ]
 
 </script>
@@ -22,7 +21,7 @@
                 <ToggleButton onClickFunction={toggleSessionStatus} label={"Start"} /> -->
             {/if}
         {/if}
-        <ToggleButton onClickFunction={() => button.function} label={button.label} />
+        <button on:click={button.function}>{button.label}</button>
     {/each}
 </div>
 

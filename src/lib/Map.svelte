@@ -35,7 +35,6 @@
 
             drawLine(waypointCoordinates, "plan")
             closeTheRoute(waypointCoordinates)
-            console.log("placemarkerstatus", $placeMarkersStatus)
         }
 
         map.on("click", ($event: any) => {

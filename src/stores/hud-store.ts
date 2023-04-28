@@ -1,5 +1,5 @@
 import { writable } from "svelte/store"
 
-export const sessionStartStatus = writable(false)
-export const placeMarkersStatus = writable(false)
-export const traveledDistance = writable(0)
+export let sessionStartStatus = writable(false)
+export let placeMarkersStatus = writable(false)
+export let traveledDistance = writable(0)
