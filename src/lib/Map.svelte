@@ -6,7 +6,7 @@
 
     let map: any
 
-    let currentLocation: Array<number>
+    let currentLocation: Array<number> = []
     let waypointMarkers: Array<Array<number>> = []
     let waypointCoordinates: Array<Array<number>> = []
     let trackingCoordinates: Array<Array<number>> = []
@@ -59,29 +59,31 @@
         }
 
         // Locate user
-        if ($sessionStartStatus) {
-            map.locate({setView: true, maxZoom: 16})
+        // map.on("", () => {
+        //     let trackingInterval = null
 
-            map.on("locationfound", (e: any) => {
-                currentLocation = L.marker()
+        //     if ($sessionStartStatus) {
+        //         map.locate({setView: true, maxZoom: 16})
 
-                // Locate and show user's location immediately
-                locateUser(e)
+        //         map.on("locationfound", (e: any) => {
+        //             currentLocation = L.marker()
 
-                let trackingInterval = setInterval(() => {
-                    // Now update the location every 5 seconds
-                    locateUser(e)
-                }, 5000)
+        //             // Locate and show user's location immediately
+        //             locateUser(e)
 
-                // Tracking can be stopped manually.
-                // Going to be added later.
-            })
+        //             trackingInterval = setInterval(() => {
+        //                 // Now update the location every 5 seconds
+        //                 locateUser(e)
+        //             }, 5000)
+        //         })
 
-            map.on("locationerror", (e: any) => {
-                console.warn(e.message)
-                sessionStartStatus.set(!$sessionStartStatus)
-            })
-        }
+        //         map.on("locationerror", (e: any) => {
+        //             console.warn(e.message)
+        //             clearTimeout(trackingInterval)
+        //             sessionStartStatus.set(!$sessionStartStatus)
+        //         })
+        //     }
+        // })
 
         const locateUser = (e: any) => {
             const radius = e.accuracy

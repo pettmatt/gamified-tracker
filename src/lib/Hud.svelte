@@ -21,7 +21,7 @@
                 <ToggleButton onClickFunction={toggleSessionStatus} label={"Start"} /> -->
             {/if}
         {/if}
-        <button on:click={button.function}>{button.label}</button>
+        <button id={button.label.toLowerCase()} on:click={button.function}>{button.label}</button>
     {/each}
 </div>
 
