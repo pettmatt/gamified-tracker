@@ -28,13 +28,14 @@
         const placeMarker = (e: any) => {
             const marker = L.marker()
             const coordinates = e.latlng
-            marker.setLatLng(coordinates).addTo(map)
-
+            marker.setLatLng(coordinates, { draggable: true }).addTo(map)
+            map.addLayer(marker)
+        
             waypointMarkers.push(marker) // Used to get easily access to the markers
             waypointCoordinates.push(coordinates) // Used to get easily the coordinates
 
             drawLine(waypointCoordinates, "plan")
-            closeTheRoute(waypointCoordinates)
+            // closeTheRoute(waypointCoordinates)
         }
 
         map.on("click", ($event: any) => {
@@ -46,10 +47,14 @@
             if (coordinates.length < 2) return
 
             // Reset polyline, so the previous values won't become a problem
-            if (lineType === "plan")
+            if (lineType === "plan") {
                 plannedPolyline = L.polyline(coordinates).addTo(map)
-            else if (lineType === "track")
+                map.addLayer(plannedPolyline)
+            }
+            else if (lineType === "track") {
                 trackingPolyline = L.polyline(coordinates).addTo(map)
+                map.addLayer(trackingPolyline)
+            }
         }
 
         const closeTheRoute = (coordinates: Array<Array<number>>) => {
@@ -83,6 +88,12 @@
                     sessionStartStatus.update(boolean => !boolean)
                 })
             }
+
+            else {
+                clearTrackingHistory(map)
+                clearTimeout(trackingInterval)
+                trackingInterval = null
+            }
         })
 
         const locateUser = (e: any) => {
@@ -111,6 +122,14 @@
 
     const resizeMap = () => {
         if (map) map.invalidateSize()
+    }
+
+    const clearTrackingHistory = (map: any) => {
+        map.removeLayer(currentLocation)
+        map.removeLayer(trackingCoordinates)
+
+        currentLocation = []
+        trackingCoordinates = []
     }
 </script>
 
