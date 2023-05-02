@@ -59,31 +59,31 @@
         }
 
         // Locate user
-        // map.on("", () => {
-        //     let trackingInterval = null
+        let trackingInterval = null
 
-        //     if ($sessionStartStatus) {
-        //         map.locate({setView: true, maxZoom: 16})
+        sessionStartStatus.subscribe(trackingValue => {
+            if (trackingValue) {
+                map.locate({setView: true, maxZoom: 16})
 
-        //         map.on("locationfound", (e: any) => {
-        //             currentLocation = L.marker()
+                map.on("locationfound", (e: any) => {
+                    currentLocation = L.marker()
 
-        //             // Locate and show user's location immediately
-        //             locateUser(e)
+                    // Locate and show user's location immediately
+                    locateUser(e)
 
-        //             trackingInterval = setInterval(() => {
-        //                 // Now update the location every 5 seconds
-        //                 locateUser(e)
-        //             }, 5000)
-        //         })
+                    trackingInterval = setInterval(() => {
+                        // Now update the location every 5 seconds
+                        locateUser(e)
+                    }, 5000)
+                })
 
-        //         map.on("locationerror", (e: any) => {
-        //             console.warn(e.message)
-        //             clearTimeout(trackingInterval)
-        //             sessionStartStatus.set(!$sessionStartStatus)
-        //         })
-        //     }
-        // })
+                map.on("locationerror", (e: any) => {
+                    console.warn(e.message)
+                    clearTimeout(trackingInterval)
+                    sessionStartStatus.update(boolean => !boolean)
+                })
+            }
+        })
 
         const locateUser = (e: any) => {
             const radius = e.accuracy

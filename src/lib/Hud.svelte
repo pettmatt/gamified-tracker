@@ -4,7 +4,7 @@
     let unit = "m"
 
     const buttonArray = [
-        { function: () => sessionStartStatus.set(!$sessionStartStatus), label: "Start" },
+        { function: () => sessionStartStatus.update(boolean => !boolean), label: "Start" },
         { function: () => placeMarkersStatus.set(!$placeMarkersStatus), label: "Plan" },
     ]
 
