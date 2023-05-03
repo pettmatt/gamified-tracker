@@ -6,12 +6,34 @@
 
     let map: any
 
+    interface DistanceProvider {
+        planned: {
+            markerDistances: Array<number>
+            getSum: Function
+        },
+        traveled: {
+            sum: number
+        },
+    }
+
     let currentLocation: Array<number> = []
     let waypointMarkers: Array<Array<number>> = []
     let waypointCoordinates: Array<Array<number>> = []
     let trackingCoordinates: Array<Array<number>> = []
     let plannedPolyline: any = null
     let trackingPolyline: any = null
+    let totalDistances: DistanceProvider = {
+        planned: {
+            markerDistances: [],
+            getSum: function() {
+                return this.markerDistances
+                    .reduce((sum: number, current: number) => sum + current)
+            }
+        },
+        traveled: {
+            sum: 0
+        }
+    }
 
     const createMap = (container: any) => {
         let map = L.map(container).setView([51.505, -0.09], 13)
@@ -31,7 +53,7 @@
             marker.setLatLng(coordinates, { draggable: true }).addTo(map)
             map.addLayer(marker)
         
-            waypointMarkers.push(marker) // Used to get easily access to the markers
+            waypointMarkers.push(marker) // Used to get easy access to the markers
             waypointCoordinates.push(coordinates) // Used to get easily the coordinates
 
             drawLine(waypointCoordinates, "plan")
@@ -50,17 +72,33 @@
             if (lineType === "plan") {
                 plannedPolyline = L.polyline(coordinates).addTo(map)
                 map.addLayer(plannedPolyline)
+                calculateNewMarkerDistance(coordinates)
             }
             else if (lineType === "track") {
                 trackingPolyline = L.polyline(coordinates).addTo(map)
                 map.addLayer(trackingPolyline)
+                calculateNewTraveledDistance(coordinates)
             }
+        }
+
+        const calculateNewMarkerDistance = (coordinates: Array<Array<number>>) => {
+            const distance = map.distance(
+                coordinates[totalDistances.planned.markerDistances.length],
+                coordinates[coordinates.length - 1]
+            )
+
+            totalDistances.planned.markerDistances.push(distance)
+        }
+
+        const calculateNewTraveledDistance = (coordinates: Array<Array<number>>) => {
+            const distance = map.distance(coordinates[0], coordinates[coordinates.length-1])
+            totalDistances.traveled.sum += distance
         }
 
         const closeTheRoute = (coordinates: Array<Array<number>>) => {
             // Makes the route "loopable", bringing the user back to the starting point.
             if (coordinates.length > 2)
-                plannedPolyline = L.polyline([ ...coordinates, coordinates[0] ]).addTo(map)
+                plannedPolyline = L.polyline([...coordinates, coordinates[0]]).addTo(map)
         }
 
         // Locate user
@@ -99,8 +137,8 @@
         const locateUser = (e: any) => {
             const radius = e.accuracy
 
-            // Ignore following error message "Property 'setLatLng' does not exist on type 'number[]'"
-            // it's just the editor messing up.
+            // Ignore possible error created by "setLatLng" method. 
+            // Typescript error which will be fixed later.
             currentLocation.setLatLng(e.latlng).addTo(map)
                 .bindPopup("Your location is within " + radius + " meters")
 
