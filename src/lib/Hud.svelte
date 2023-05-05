@@ -1,11 +1,12 @@
 <script lang="ts">
     import { sessionStartStatus, traveledDistance, placeMarkersStatus } from "../stores/hud-store"
+    import { GeoAltFill, GeoAlt, Geo, GeoFill } from "svelte-bootstrap-icons"
 
     let unit = "m"
 
     const buttonArray = [
-        { function: () => sessionStartStatus.update(boolean => !boolean), label: "Start" },
-        { function: () => placeMarkersStatus.set(!$placeMarkersStatus), label: "Plan" },
+        { function: () => sessionStartStatus.update(boolean => !boolean), label: "Start", icon: Geo },
+        { function: () => placeMarkersStatus.set(!$placeMarkersStatus), label: "Plan", icon: GeoAlt },
     ]
 
 </script>
@@ -21,18 +22,30 @@
                 <ToggleButton onClickFunction={toggleSessionStatus} label={"Start"} /> -->
             {/if}
         {/if}
-        <button id={button.label.toLowerCase()} on:click={button.function}>{button.label}</button>
+        <button id={button.label.toLowerCase()} on:click={button.function}>
+            <div>
+                <small>{button.label}</small>
+            </div>
+        </button>
     {/each}
 </div>
 
 <style>
     #interface-hud {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 0.3em;
         width: 100%;
-        height: 1rem;
+        padding: 0.5em 0;
         background-color: #333;
     }
 
-    b {
+    #travel-distance-container {
         margin: 0 4vw;
+    }
+
+    #travel-distance-container b {
+        margin: 0 auto;
     }
 </style>

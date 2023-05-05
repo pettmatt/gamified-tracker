@@ -123,7 +123,7 @@
                 map.on("locationerror", (e: any) => {
                     console.warn(e.message)
                     clearTimeout(trackingInterval)
-                    sessionStartStatus.update(boolean => !boolean)
+                    sessionStartStatus.set(false)
                 })
             }
 
@@ -179,4 +179,4 @@
         crossorigin="" />
 </svelte:head>
 
-<div id="leaf-map" style="width: 100%; height: 94%; background-color: #333;" use:mapAction />
+<div id="leaf-map" style="width: 100%; height: 100%; background-color: #333;" use:mapAction />

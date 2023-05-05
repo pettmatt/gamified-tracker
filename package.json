@@ -19,6 +19,7 @@
     "vite": "^4.2.0"
   },
   "dependencies": {
-    "leaflet": "^1.9.3"
+    "leaflet": "^1.9.3",
+    "svelte-bootstrap-icons": "^2.3.1"
   }
 }

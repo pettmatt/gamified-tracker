@@ -25,10 +25,9 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  overflow-y: hidden;
 }
 
 h1 {
@@ -37,9 +36,17 @@ h1 {
 }
 
 #app {
-  margin: 0 auto;
   max-width: 1280px;
-  text-align: center;
+}
+
+main > #leaf-map {
+  border-radius: 0.5em;
+  margin: 1em 1em 0 1em;
+}
+
+main > #interface-hud {
+  border-radius: 0.5em;
+  margin: 0 1em 1em 1em;
 }
 
 button {

@@ -12,6 +12,9 @@
   main {
     width: 100svw;
     height: 100svh;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 </style>
 
