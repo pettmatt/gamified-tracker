@@ -23,9 +23,8 @@
             {/if}
         {/if}
         <button id={button.label.toLowerCase()} on:click={button.function}>
-            <div>
-                <small>{button.label}</small>
-            </div>
+            <svelte:component this={button.icon} class="icon" />
+            <small>{button.label}</small>
         </button>
     {/each}
 </div>
@@ -48,4 +47,10 @@
     #travel-distance-container b {
         margin: 0 auto;
     }
+
+    /* button > * {
+        display: block;
+        text-align: center;
+        width: 100%;
+    } */
 </style>
