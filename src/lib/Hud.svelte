@@ -5,8 +5,8 @@
     let unit = "m"
 
     const buttonArray = [
-        { function: () => sessionStartStatus.update(boolean => !boolean), label: "Start", icon: Geo },
-        { function: () => placeMarkersStatus.set(!$placeMarkersStatus), label: "Plan", icon: GeoAlt },
+        { function: () => sessionStartStatus.update(boolean => !boolean), value: sessionStartStatus, label: "Start", icons: { default: Geo, checked: GeoFill } },
+        { function: () => placeMarkersStatus.update(boolean => !boolean), value: placeMarkersStatus, label: "Plan", icons: { default: GeoAlt, checked: GeoAltFill } },
     ]
 
 </script>
@@ -23,7 +23,7 @@
             {/if}
         {/if}
         <button id={button.label.toLowerCase()} on:click={button.function}>
-            <svelte:component this={button.icon} class="icon" />
+            <svelte:component this={(button.value) ? button.icons.default : button.icons.checked} class="icon" />
             <small>{button.label}</small>
         </button>
     {/each}

@@ -50,14 +50,33 @@
         const placeMarker = (e: any) => {
             const marker = L.marker()
             const coordinates = e.latlng
-            marker.setLatLng(coordinates, { draggable: true }).addTo(map)
-            map.addLayer(marker)
         
-            waypointMarkers.push(marker) // Used to get easy access to the markers
             waypointCoordinates.push(coordinates) // Used to get easily the coordinates
-
+            waypointMarkers.push(marker) // Used to get easy access to the markers
+            
             drawLine(waypointCoordinates, "plan")
             // closeTheRoute(waypointCoordinates)
+
+            let markerDistances = totalDistances.planned.markerDistances
+            
+            marker.setLatLng(coordinates, { draggable: true }).addTo(map)
+
+            if (markerDistances.length < 1) {
+                marker.bindPopup(`Starting point`)
+            } else {
+                const distance = markerDistances[markerDistances.length - 1]
+                if (distance > 1000) {
+                    marker.bindPopup(`Distance from the previous marker is 
+                    ${ (distance / 1000).toFixed(2) } kilometers`)
+                }
+                else {
+                    marker.bindPopup(`Distance from the previous marker is 
+                    ${ (distance).toFixed(2) } meters`)
+                }
+            }
+
+            map.addLayer(marker)
+
         }
 
         map.on("click", ($event: any) => {
