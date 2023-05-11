@@ -2,7 +2,7 @@
     import icon from "../assets/svelte.svg"
     import * as L from "leaflet"
     import "leaflet/dist/leaflet.css"
-    import { placeMarkersStatus, sessionStartStatus } from "../stores/hud-store"
+    import { placeMarkersStatus, sessionStartStatus, traveledDistance } from "../stores/hud-store"
 
     let map: any
 
@@ -112,6 +112,8 @@
         const calculateNewTraveledDistance = (coordinates: Array<Array<number>>) => {
             const distance = map.distance(coordinates[0], coordinates[coordinates.length-1])
             totalDistances.traveled.sum += distance
+            // Update the travel distance
+            traveledDistance.update(value => totalDistances.traveled.sum)
         }
 
         const closeTheRoute = (coordinates: Array<Array<number>>) => {
