@@ -39,7 +39,7 @@
     }
 
     const createMap = (container: any) => {
-        let map = L.map(container).setView([51.505, -0.09], 13)
+        let map = L.map(container).setView([50.08804, 14.42076], 5)
         L.tileLayer(
             "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
             {
@@ -92,14 +92,13 @@
 
             // Reset polyline, so the previous values won't become a problem
             if (lineType === "plan") {
-                plannedRouting = LeafletRouting.createRoute(L, map, coordinates)
+                plannedRouting = LeafletRouting.createRoute(L, map, plannedRouting, coordinates)
                 plannedPolyline = L.polyline(coordinates).addTo(map)
-                console.log(plannedRouting)
                 map.addLayer(plannedPolyline)
                 calculateNewMarkerDistance(coordinates)
             }
             else if (lineType === "track") {
-                trackingRouting = LeafletRouting.createRoute(L, map, coordinates)
+                trackingRouting = LeafletRouting.createRoute(L, map, trackingRouting, coordinates)
                 trackingPolyline = L.polyline(coordinates).addTo(map)
                 map.addLayer(trackingPolyline)
                 calculateNewTraveledDistance(coordinates)
@@ -167,7 +166,7 @@
             // Ignore possible error created by "setLatLng" method. 
             // Typescript error which will be fixed later.
             currentLocation.setLatLng(e.latlng).addTo(map)
-                .bindPopup("Your location is within " + radius + " meters")
+                .bindPopup(`Your location is within ${ radius } meters`)
 
             trackingCoordinates.push(currentLocation.getLatLng())
             drawLine(trackingCoordinates, "track")
