@@ -3,6 +3,7 @@
     import * as L from "leaflet"
     import "leaflet/dist/leaflet.css"
     import { placeMarkersStatus, sessionStartStatus, traveledDistance } from "../stores/hud-store"
+    import * as LeafletRouting from "../services/leaflet-routing-machine"
 
     let map: any
 
@@ -22,6 +23,8 @@
     let trackingCoordinates: Array<Array<number>> = []
     let plannedPolyline: any = null
     let trackingPolyline: any = null
+    let plannedRouting: any = null
+    let trackingRouting: any = null
     let totalDistances: DistanceProvider = {
         planned: {
             markerDistances: [],
@@ -89,11 +92,14 @@
 
             // Reset polyline, so the previous values won't become a problem
             if (lineType === "plan") {
+                plannedRouting = LeafletRouting.createRoute(L, map, coordinates)
                 plannedPolyline = L.polyline(coordinates).addTo(map)
+                console.log(plannedRouting)
                 map.addLayer(plannedPolyline)
                 calculateNewMarkerDistance(coordinates)
             }
             else if (lineType === "track") {
+                trackingRouting = LeafletRouting.createRoute(L, map, coordinates)
                 trackingPolyline = L.polyline(coordinates).addTo(map)
                 map.addLayer(trackingPolyline)
                 calculateNewTraveledDistance(coordinates)

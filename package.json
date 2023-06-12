@@ -21,6 +21,7 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "leaflet": "^1.9.3",
+    "leaflet-routing-machine": "^3.2.12",
     "svelte-bootstrap-icons": "^2.3.1"
   }
 }
