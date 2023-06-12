@@ -35,7 +35,7 @@
         flex-direction: row;
         justify-content: center;
         gap: 0.3em;
-        width: 100%;
+        /* width: 100%; */
         padding: 0.5em 0;
         background-color: #333;
     }

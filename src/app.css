@@ -11,7 +11,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+  /* -webkit-text-size-adjust: 100%; */
 }
 
 a {
@@ -39,14 +39,10 @@ h1 {
   max-width: 1280px;
 }
 
-main > #leaf-map {
-  border-radius: 0.5em;
-  margin: 1em 1em 0 1em;
-}
-
+main > #leaf-map,
 main > #interface-hud {
   border-radius: 0.5em;
-  margin: 0 1em 1em 1em;
+  /* margin: 1em 1em 0 1em; */
 }
 
 button {

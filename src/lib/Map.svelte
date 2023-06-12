@@ -206,4 +206,4 @@
         crossorigin="" />
 </svelte:head>
 
-<div id="leaf-map" style="width: 100%; height: 100%; background-color: #333;" use:mapAction />
+<div id="leaf-map" style="height: 100%; background-color: #333;" use:mapAction />
