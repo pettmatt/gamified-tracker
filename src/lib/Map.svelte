@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Hud from "./Hud.svelte"
     import icon from "../assets/svelte.svg"
     import * as L from "leaflet"
     import "leaflet/dist/leaflet.css"
@@ -24,7 +25,6 @@
     let plannedPolyline: any = null
     let trackingPolyline: any = null
     let plannedRouting: any = null
-    let trackingRouting: any = null
     let totalDistances: DistanceProvider = {
         planned: {
             markerDistances: [],
@@ -98,9 +98,14 @@
                 calculateNewMarkerDistance(coordinates)
             }
             else if (lineType === "track") {
-                trackingRouting = LeafletRouting.createRoute(L, map, trackingRouting, coordinates)
-                trackingPolyline = L.polyline(coordinates).addTo(map)
-                map.addLayer(trackingPolyline)
+                if (trackingPolyline === null) {
+                    trackingPolyline = L.polyline(coordinates).addTo(map)
+                    map.addLayer(trackingPolyline)
+                }
+                else {
+                    trackingPolyline.addLatLng(coordinates)
+                }
+
                 calculateNewTraveledDistance(coordinates)
             }
         }
@@ -132,18 +137,18 @@
 
         sessionStartStatus.subscribe(trackingValue => {
             if (trackingValue) {
-                map.locate({setView: true, maxZoom: 16})
+                map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true })
 
                 map.on("locationfound", (e: any) => {
                     currentLocation = L.marker()
 
                     // Locate and show user's location immediately
-                    locateUser(e)
+                    trackUser(e)
 
                     trackingInterval = setInterval(() => {
-                        // Now update the location every 5 seconds
-                        locateUser(e)
-                    }, 5000)
+                        // Now update the location every 2 seconds
+                        trackUser(e)
+                    }, 2000)
                 })
 
                 map.on("locationerror", (e: any) => {
@@ -160,7 +165,11 @@
             }
         })
 
-        const locateUser = (e: any) => {
+        const trackUser = (e: any) => {            
+            // Sometimes the hook is unable to provide coordinates.
+            if (!e.latlng) return
+            console.log("WE CAME HERE", e)
+            
             const radius = e.accuracy
 
             // Ignore possible error created by "setLatLng" method. 
@@ -195,6 +204,29 @@
         currentLocation = []
         trackingCoordinates = []
     }
+
+    const showPlanningMarkers = () => {
+
+    }
+
+    const hidePlanningMarkers = () => {
+
+    }
+
+    const checkLayers = () => {
+        let markercount = 0
+        let polylineCount = 0
+        map.eachLayer((layer: any) => {
+            if (layer instanceof L.Marker) {
+                markercount++
+            } else if (layer instanceof L.Polyline) {
+                polylineCount++
+            }
+        })
+
+        console.log("markers:", markercount)
+        console.log("polylines:", polylineCount)
+    }
 </script>
 
 <svelte:window on:resize={resizeMap} />
@@ -205,4 +237,6 @@
         crossorigin="" />
 </svelte:head>
 
-<div id="leaf-map" style="height: 100%; background-color: #333;" use:mapAction />
+<div id="leaf-map" style="height: 100%; background-color: #333;" use:mapAction>
+    <Hud />
+</div>

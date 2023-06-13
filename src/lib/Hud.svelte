@@ -12,32 +12,44 @@
 </script>
 
 <div id="interface-hud">
-    {#each buttonArray as button, index}
-        {#if buttonArray.length / 2 == index}
-            {#if $sessionStartStatus}
-                <div id="travel-distance-container">
-                    <b>{$traveledDistance} {unit}</b>
-                </div>
-            <!-- {:else}
-                <ToggleButton onClickFunction={toggleSessionStatus} label={"Start"} /> -->
+    <div class="panel">
+        {#each buttonArray as button, index}
+            {#if buttonArray.length / 2 == index}
+                {#if $sessionStartStatus}
+                    <div id="travel-distance-container">
+                        <b>{$traveledDistance} {unit}</b>
+                    </div>
+                <!-- {:else}
+                    <ToggleButton onClickFunction={toggleSessionStatus} label={"Start"} /> -->
+                {/if}
             {/if}
-        {/if}
-        <button id={button.label.toLowerCase()} on:click={button.function}>
-            <svelte:component this={(button.value) ? button.icons.default : button.icons.checked} class="icon" />
-            <small>{button.label}</small>
-        </button>
-    {/each}
+            <button id={button.label.toLowerCase()} on:click={button.function}>
+                <svelte:component this={(button.value) ? button.icons.default : button.icons.checked} class="icon" />
+                <small>{button.label}</small>
+            </button>
+        {/each}
+    </div>
 </div>
 
 <style>
     #interface-hud {
+        position: relative;
+        z-index: 99;
+        /* height: 100%; */
+    }
+
+    #interface-hud > .panel {
+        bottom: 0;
         display: flex;
         flex-direction: row;
         justify-content: center;
         gap: 0.3em;
-        /* width: 100%; */
         padding: 0.5em 0;
-        background-color: #333;
+        /* background-color: #333; */
+    }
+
+    #interface-hud .panel button {
+
     }
 
     #travel-distance-container {
@@ -47,10 +59,4 @@
     #travel-distance-container b {
         margin: 0 auto;
     }
-
-    /* button > * {
-        display: block;
-        text-align: center;
-        width: 100%;
-    } */
 </style>

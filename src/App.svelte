@@ -1,11 +1,9 @@
 <script lang="ts">
   import Map from "./lib/Map.svelte"
-  import Hud from "./lib/Hud.svelte"
 </script>
 
 <main>
   <Map />
-  <Hud />
 </main>
 
 <svelte:head>

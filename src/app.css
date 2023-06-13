@@ -53,6 +53,11 @@ main > #interface-hud {
 main > #leaf-map {
   height: 90%;
 }
+main #leaf-map > .leaflet-pane,
+main #leaf-map > .leaflet-control-container {
+  position: relative;
+  z-index: 1;
+}
 
 button {
   border-radius: 8px;
