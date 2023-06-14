@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Hud from "./Hud.svelte"
     import icon from "../assets/svelte.svg"
     import * as L from "leaflet"
     import "leaflet/dist/leaflet.css"
@@ -237,6 +236,4 @@
         crossorigin="" />
 </svelte:head>
 
-<div id="leaf-map" style="height: 100%; background-color: #333;" use:mapAction>
-    <Hud />
-</div>
+<div id="leaf-map" style="height: 100%; background-color: #333;" use:mapAction />
