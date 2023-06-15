@@ -17,12 +17,11 @@
         visibilityBottom = true
         visibilityTop = false
     })
-
 </script>
 
 <div id="interface-hud">
     <div class="interface-container">
-        <div class="panel-top" class:fade-in={ !visibilityTop } class:fade-out={ visibilityTop }>
+        <div class="panel-top" class:fade-in={ visibilityTop } class:fade-out={ !visibilityTop }>
             {#if $sessionStartStatus}
                 <div id="travel-distance-container">
                     <b>{$traveledDistance} {unit}</b>
@@ -39,7 +38,7 @@
                 <button on:click={ () => visibilityBottom = !visibilityBottom }>Bot</button>
             </div>
         </div>
-        <div class="panel-bottom" class:fade-in={ !visibilityBottom } class:fade-out={ visibilityBottom }>
+        <div class="panel-bottom" class:fade-in={ visibilityBottom } class:fade-out={ !visibilityBottom }>
             {#each buttonArray as button, index}
                 {#if buttonArray.length / 2 == index}
                     <!-- Put an element at the center point of the panel -->
@@ -131,10 +130,16 @@
     /* Animations */
     .fade-out {
         opacity: 0;
-        transition: opacity 0.3s ease-in-out;
+        transform: translateY(100%);
+        transition: 
+            opacity 0.3s ease-in-out,
+            transform 0.5s ease-in-out;
     }
     .fade-in {
         opacity: 1;
-        transition: opacity 0.3s ease-in-out;
+        transform: translateY(0%);
+        transition:
+            opacity 0.6s ease-in-out,
+            transform 0.5s ease-in-out;;
     }
 </style>
