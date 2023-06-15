@@ -179,7 +179,7 @@
     .fade-out-bottom {
         opacity: 0;
         transform: translateY(100%);
-        transition: 
+        transition:
             opacity 0.3s ease-in-out,
             transform 0.5s ease-in-out;
     }
@@ -188,12 +188,12 @@
         transform: translateY(0%);
         transition:
             opacity 0.3s ease-in-out,
-            transform 0.5s ease-in-out;;
+            transform 0.5s ease-in-out;
     }
     .fade-out-right{
         opacity: 0;
         transform: translateX(100%);
-        transition: 
+        transition:
             opacity 0.3s ease-in-out,
             transform 0.5s ease-in-out;
     }
@@ -202,6 +202,6 @@
         transform: translateX(0%);
         transition:
             opacity 0.3s ease-in-out,
-            transform 0.5s ease-in-out;;
+            transform 0.5s ease-in-out;
     }
 </style>
