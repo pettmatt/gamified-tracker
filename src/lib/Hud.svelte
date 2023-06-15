@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte"
+    import { onMount, onDestroy } from "svelte"
     import { sessionStartStatus, traveledDistance, placeMarkersStatus } from "../stores/hud-store"
     import { GeoAltFill, GeoAlt, Geo, GeoFill } from "svelte-bootstrap-icons"
 
@@ -12,16 +12,64 @@
 
     let visibilityBottom: Boolean
     let visibilityTop: Boolean
+    let visibilityRight: Boolean
+    let inActivity: any
 
     onMount(() => {
         visibilityBottom = true
         visibilityTop = false
+        visibilityRight = true
+
+        addInactivityTimers()
     })
+
+    onDestroy(() => {
+        removeInactivityTimers()
+    })
+
+    const addInactivityTimers = () => {
+        inActivity = setTimeout(() => {
+            // Disable UI elements if screen is inactive.
+            // This should NOT override settings.
+            hideUIElements()
+        }, 10000)
+
+        window.addEventListener('click', resetTimer)
+        window.addEventListener('keydown', resetTimer)
+        window.addEventListener('mousemove', resetTimer)
+        window.addEventListener('touchmove', resetTimer)
+        window.addEventListener('scroll', resetTimer)
+    }
+
+    const removeInactivityTimers = () => {
+        clearTimeout(inActivity)
+        window.removeEventListener('click', resetTimer)
+        window.removeEventListener('keydown', resetTimer)
+        window.removeEventListener('mousemove', resetTimer)
+        window.removeEventListener('touchmove', resetTimer)
+        window.removeEventListener('scroll', resetTimer)
+    }
+
+    const resetTimer = () => {
+        showUIElements()
+        clearTimeout(inActivity)
+        inActivity = setTimeout(hideUIElements, 10000)
+    }
+
+    const hideUIElements = () => {
+        visibilityRight = false
+        visibilityBottom = false
+    }
+
+    const showUIElements = () => {
+        visibilityRight = true
+        visibilityBottom = true
+    }
 </script>
 
 <div id="interface-hud">
     <div class="interface-container">
-        <div class="panel-top" class:fade-in={ visibilityTop } class:fade-out={ !visibilityTop }>
+        <div class="panel-top" class:fade-in-bottom={ visibilityTop } class:fade-out-bottom={ !visibilityTop }>
             {#if $sessionStartStatus}
                 <div id="travel-distance-container">
                     <b>{$traveledDistance} {unit}</b>
@@ -33,12 +81,12 @@
         <div class="middle-section-panels">
             <div class="panel-left" />
             <div class="panel-middle"></div>
-            <div class="panel-right">
+            <div class="panel-right" class:fade-in-right={ visibilityRight } class:fade-out-right={ !visibilityRight }>
                 <button on:click={ () => visibilityTop = !visibilityTop }>Top</button>
                 <button on:click={ () => visibilityBottom = !visibilityBottom }>Bot</button>
             </div>
         </div>
-        <div class="panel-bottom" class:fade-in={ visibilityBottom } class:fade-out={ !visibilityBottom }>
+        <div class="panel-bottom" class:fade-in-bottom={ visibilityBottom } class:fade-out-bottom={ !visibilityBottom }>
             {#each buttonArray as button, index}
                 {#if buttonArray.length / 2 == index}
                     <!-- Put an element at the center point of the panel -->
@@ -128,18 +176,32 @@
     }
 
     /* Animations */
-    .fade-out {
+    .fade-out-bottom {
         opacity: 0;
         transform: translateY(100%);
         transition: 
             opacity 0.3s ease-in-out,
             transform 0.5s ease-in-out;
     }
-    .fade-in {
+    .fade-in-bottom {
         opacity: 1;
         transform: translateY(0%);
         transition:
-            opacity 0.6s ease-in-out,
+            opacity 0.3s ease-in-out,
+            transform 0.5s ease-in-out;;
+    }
+    .fade-out-right{
+        opacity: 0;
+        transform: translateX(100%);
+        transition: 
+            opacity 0.3s ease-in-out,
+            transform 0.5s ease-in-out;
+    }
+    .fade-in-right {
+        opacity: 1;
+        transform: translateX(0%);
+        transition:
+            opacity 0.3s ease-in-out,
             transform 0.5s ease-in-out;;
     }
 </style>
