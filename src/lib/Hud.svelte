@@ -18,9 +18,9 @@
 
     onMount(() => {
         notifyUser = false
-        visibilityTop = false
-        visibilityRight = true
-        visibilityBottom = true
+        // visibilityTop = false
+        // visibilityRight = true
+        // visibilityBottom = true
 
         addInactivityTimers()
     })
@@ -36,20 +36,20 @@
             hideUIElements()
         }, 10000)
 
-        window.addEventListener('click', resetTimer)
-        window.addEventListener('keydown', resetTimer)
-        window.addEventListener('mousemove', resetTimer)
-        window.addEventListener('touchmove', resetTimer)
-        window.addEventListener('scroll', resetTimer)
+        window.addEventListener("click", resetTimer)
+        window.addEventListener("keydown", resetTimer)
+        window.addEventListener("mousemove", resetTimer)
+        window.addEventListener("touchmove", resetTimer)
+        window.addEventListener("scroll", resetTimer)
     }
 
     const removeInactivityTimers = () => {
         clearTimeout(inActivity)
-        window.removeEventListener('click', resetTimer)
-        window.removeEventListener('keydown', resetTimer)
-        window.removeEventListener('mousemove', resetTimer)
-        window.removeEventListener('touchmove', resetTimer)
-        window.removeEventListener('scroll', resetTimer)
+        window.removeEventListener("click", resetTimer)
+        window.removeEventListener("keydown", resetTimer)
+        window.removeEventListener("mousemove", resetTimer)
+        window.removeEventListener("touchmove", resetTimer)
+        window.removeEventListener("scroll", resetTimer)
     }
 
     const resetTimer = () => {
