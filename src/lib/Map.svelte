@@ -166,8 +166,8 @@
 
         const trackUser = (e: any) => {            
             // Sometimes the hook is unable to provide coordinates.
-            if (!e.latlng) return
-            console.log("WE CAME HERE", e)
+            if (e.latlng === null) return
+            console.log("User coordinates", e)
             
             const radius = e.accuracy
 

@@ -5,22 +5,44 @@
 
     let unit = "m"
 
-    const buttonArray = [
-        { function: () => sessionStartStatus.update(boolean => !boolean), value: sessionStartStatus, label: "Start", icons: { default: Geo, checked: GeoFill } },
-        { function: () => placeMarkersStatus.update(boolean => !boolean), value: placeMarkersStatus, label: "Plan", icons: { default: GeoAlt, checked: GeoAltFill } },
+    interface Button {
+        label: string,
+        icons: { default: Function, checked: Function },
+        value: any,
+        onClick: () => void,
+    }
+
+    const createButton = (
+        label: string,
+        icons: Button["icons"],
+        store: Object,
+        value: Boolean,
+        updateFunction: (value: boolean) => boolean
+    ) => {
+        return {
+            label,
+            icons,
+            value,
+            onClick: () => store.update(updateFunction)
+        }
+    }
+
+    const buttonArray: Array<Button> = [
+        createButton("Start", { default: Geo, checked: GeoFill }, sessionStartStatus, $sessionStartStatus, (boolean) => !boolean),
+        createButton("Plan", { default: GeoAlt, checked: GeoAltFill }, placeMarkersStatus, $placeMarkersStatus, (boolean) => !boolean)
     ]
 
-    let notifyUser: Boolean
+    let displayNotification: Boolean
     let visibilityTop: Boolean
     let visibilityRight: Boolean
     let visibilityBottom: Boolean
     let inActivity: any
 
     onMount(() => {
-        notifyUser = false
-        // visibilityTop = false
-        // visibilityRight = true
-        // visibilityBottom = true
+        displayNotification = false
+        visibilityTop = false
+        visibilityRight = true
+        visibilityBottom = true
 
         addInactivityTimers()
     })
@@ -83,11 +105,11 @@
         <div class="middle-section-panels">
             <div class="panel-left" />
             <div class="panel-middle">
-                {#if notifyUser }
-                <div class="notification-box">
-                    <h2>Testing</h2>
-                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dignissimos aut temporibus a sunt, voluptates enim quod maxime dolore sint placeat laborum hic illo nobis. Pariatur excepturi deleniti sed tempore modi?</p>
-                </div>
+                {#if displayNotification }
+                    <div class="notification-box">
+                        <h2>Testing</h2>
+                        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dignissimos aut temporibus a sunt, voluptates enim quod maxime dolore sint placeat laborum hic illo nobis. Pariatur excepturi deleniti sed tempore modi?</p>
+                    </div>
                 {/if}
             </div>
             <div class="panel-right" class:fade-in-right={ visibilityRight } class:fade-out-right={ !visibilityRight }>
@@ -101,10 +123,10 @@
                     <!-- Put an element at the center point of the panel -->
                     <!-- Should be used on elements that need to be at the center -->
                 {/if}
-                <button id={ button.label.toLowerCase() } on:click={ button.function }>
-                    <svelte:component this={ (button.value) ? button.icons.default : button.icons.checked } class="icon" />
-                    <small>{button.label}</small>
-                </button>
+                <button id={`button-${index}`} class:highlight={ button.value } on:click={ button.onClick }>
+                    <svelte:component this={ button.value ? button.icons.checked : button.icons.default } class="icon" />
+                    <small>{ button.label }</small>
+                </button> 
             {/each}
         </div>
     </div>
@@ -193,6 +215,11 @@
     }
     .notification-box > * {
         text-align: center;
+    }
+
+    .highlight {
+        border: solid 2px;
+        border-color: #646cff;
     }
 
     /* Animations */
