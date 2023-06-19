@@ -10,15 +10,17 @@
         { function: () => placeMarkersStatus.update(boolean => !boolean), value: placeMarkersStatus, label: "Plan", icons: { default: GeoAlt, checked: GeoAltFill } },
     ]
 
-    let visibilityBottom: Boolean
+    let notifyUser: Boolean
     let visibilityTop: Boolean
     let visibilityRight: Boolean
+    let visibilityBottom: Boolean
     let inActivity: any
 
     onMount(() => {
-        visibilityBottom = true
+        notifyUser = false
         visibilityTop = false
         visibilityRight = true
+        visibilityBottom = true
 
         addInactivityTimers()
     })
@@ -80,7 +82,14 @@
         </div>
         <div class="middle-section-panels">
             <div class="panel-left" />
-            <div class="panel-middle"></div>
+            <div class="panel-middle">
+                {#if notifyUser }
+                <div class="notification-box">
+                    <h2>Testing</h2>
+                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dignissimos aut temporibus a sunt, voluptates enim quod maxime dolore sint placeat laborum hic illo nobis. Pariatur excepturi deleniti sed tempore modi?</p>
+                </div>
+                {/if}
+            </div>
             <div class="panel-right" class:fade-in-right={ visibilityRight } class:fade-out-right={ !visibilityRight }>
                 <button on:click={ () => visibilityTop = !visibilityTop }>Top</button>
                 <button on:click={ () => visibilityBottom = !visibilityBottom }>Bot</button>
@@ -92,8 +101,8 @@
                     <!-- Put an element at the center point of the panel -->
                     <!-- Should be used on elements that need to be at the center -->
                 {/if}
-                <button id={button.label.toLowerCase()} on:click={button.function}>
-                    <svelte:component this={(button.value) ? button.icons.default : button.icons.checked} class="icon" />
+                <button id={ button.label.toLowerCase() } on:click={ button.function }>
+                    <svelte:component this={ (button.value) ? button.icons.default : button.icons.checked } class="icon" />
                     <small>{button.label}</small>
                 </button>
             {/each}
@@ -150,12 +159,6 @@
         padding: 0 0.5em;
     }
 
-    #interface-hud .panel-right button {
-        /* border-radius: 1.5rem; */
-        /* width: 3rem; */
-        /* height: 3rem; */
-    }
-
     #interface-hud .panel-middle {
         flex: 1 1 auto;
     }
@@ -173,6 +176,23 @@
 
     #travel-distance-container b {
         margin: 0 auto;
+    }
+
+    .notification-box {
+        border-radius: 0.5em;
+        display: flex;
+        flex-direction: column;
+        margin: auto;
+        padding: 0.5em;
+        max-width: 700px;
+        max-height: 100%;
+        overflow-y: scroll;
+        color: #000;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(144, 144, 144, 0.4));
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    .notification-box > * {
+        text-align: center;
     }
 
     /* Animations */
