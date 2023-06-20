@@ -2,35 +2,9 @@
     import { onMount, onDestroy } from "svelte"
     import { sessionStartStatus, traveledDistance, placeMarkersStatus } from "../stores/hud-store"
     import { GeoAltFill, GeoAlt, Geo, GeoFill } from "svelte-bootstrap-icons"
+    import ToggleButton from "./UI/ToggleButton.svelte"
 
     let unit = "m"
-
-    interface Button {
-        label: string,
-        icons: { default: Function, checked: Function },
-        value: any,
-        onClick: () => void,
-    }
-
-    const createButton = (
-        label: string,
-        icons: Button["icons"],
-        store: Object,
-        value: Boolean,
-        updateFunction: (value: boolean) => boolean
-    ) => {
-        return {
-            label,
-            icons,
-            value,
-            onClick: () => store.update(updateFunction)
-        }
-    }
-
-    const buttonArray: Array<Button> = [
-        createButton("Start", { default: Geo, checked: GeoFill }, sessionStartStatus, $sessionStartStatus, (boolean) => !boolean),
-        createButton("Plan", { default: GeoAlt, checked: GeoAltFill }, placeMarkersStatus, $placeMarkersStatus, (boolean) => !boolean)
-    ]
 
     let displayNotification: Boolean
     let visibilityTop: Boolean
@@ -98,8 +72,6 @@
                 <div id="travel-distance-container">
                     <b>{$traveledDistance} {unit}</b>
                 </div>
-                <!-- {:else}
-                <ToggleButton onClickFunction={toggleSessionStatus} label={"Start"} /> -->
             {/if}
         </div>
         <div class="middle-section-panels">
@@ -118,16 +90,8 @@
             </div>
         </div>
         <div class="panel-bottom" class:fade-in-bottom={ visibilityBottom } class:fade-out-bottom={ !visibilityBottom }>
-            {#each buttonArray as button, index}
-                {#if buttonArray.length / 2 == index}
-                    <!-- Put an element at the center point of the panel -->
-                    <!-- Should be used on elements that need to be at the center -->
-                {/if}
-                <button id={`button-${index}`} class:highlight={ button.value } on:click={ button.onClick }>
-                    <svelte:component this={ button.value ? button.icons.checked : button.icons.default } class="icon" />
-                    <small>{ button.label }</small>
-                </button> 
-            {/each}
+            <ToggleButton label="Start" icons={ { default: Geo, checked: GeoFill } } value={ $sessionStartStatus } store={ sessionStartStatus } />
+            <ToggleButton label="Plan" icons={ { default: GeoAlt, checked: GeoAltFill } } value={ $placeMarkersStatus } store={ placeMarkersStatus } />
         </div>
     </div>
 </div>
@@ -215,11 +179,6 @@
     }
     .notification-box > * {
         text-align: center;
-    }
-
-    .highlight {
-        border: solid 2px;
-        border-color: #646cff;
     }
 
     /* Animations */
