@@ -7,10 +7,10 @@
 
     let unit = "m"
 
-    let displayNotification: Boolean
-    let visibilityTop: Boolean
-    let visibilityRight: Boolean
-    let visibilityBottom: Boolean
+    let displayNotification: boolean
+    let visibilityTop: boolean
+    let visibilityRight: boolean
+    let visibilityBottom: boolean
     let inActivity: any
 
     onMount(() => {
@@ -59,7 +59,7 @@
         visibilityRight = false
         visibilityBottom = false
     }
-
+    
     const showUIElements = () => {
         visibilityRight = true
         visibilityBottom = true
@@ -68,17 +68,17 @@
 
 <div id="interface-hud">
     <div class="interface-container">
-        <div class="panel-top" class:fade-in-bottom={ visibilityTop } class:fade-out-bottom={ !visibilityTop }>
+        <div class="panel-top" class:fade-in-top={ visibilityTop } class:fade-out-top={ !visibilityTop }>
             {#if $sessionStartStatus}
                 <div id="travel-distance-container">
-                    <b>{$traveledDistance} {unit}</b>
+                    <b>{ $traveledDistance } { unit }</b>
                 </div>
             {/if}
         </div>
         <div class="middle-section-panels">
             <div class="panel-left" />
             <div class="panel-middle">
-                {#if displayNotification }
+                {#if displayNotification}
                     <NotificationBox />
                 {/if}
             </div>
@@ -123,6 +123,15 @@
         flex: 0 1 auto;
     }
 
+    #interface-hud .panel-top {
+        text-align: center;
+        color: #000;
+    }
+    #interface-hud .panel-top h1 {
+        margin: 0;
+        font-size: 2.5rem;
+    }
+
     #interface-hud .panel-right,
     #interface-hud .panel-left {
         flex: 0 0 2rem;
@@ -163,9 +172,23 @@
     }
 
     /* Animations */
+    .fade-out-top {
+        opacity: 0;
+        transform: translateY(0%);
+        transition:
+            opacity 0.3s ease-in-out,
+            transform 0.5s ease-in-out;
+    }
+    .fade-in-top {
+        opacity: 1;
+        transform: translateY(10%);
+        transition:
+            opacity 0.3s ease-in-out,
+            transform 0.5s ease-in-out;
+    }
     .fade-out-bottom {
         opacity: 0;
-        transform: translateY(100%);
+        transform: translateY(50%);
         transition:
             opacity 0.3s ease-in-out,
             transform 0.5s ease-in-out;
@@ -179,7 +202,7 @@
     }
     .fade-out-right{
         opacity: 0;
-        transform: translateX(100%);
+        transform: translateX(50%);
         transition:
             opacity 0.3s ease-in-out,
             transform 0.5s ease-in-out;

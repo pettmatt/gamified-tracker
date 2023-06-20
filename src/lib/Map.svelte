@@ -135,6 +135,7 @@
         let trackingInterval = null
 
         sessionStartStatus.subscribe(trackingValue => {
+            console.log("VALUEs",trackingValue)
             if (trackingValue) {
                 map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true })
 
