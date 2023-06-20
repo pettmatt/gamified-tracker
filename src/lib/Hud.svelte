@@ -3,6 +3,7 @@
     import { sessionStartStatus, traveledDistance, placeMarkersStatus } from "../stores/hud-store"
     import { GeoAltFill, GeoAlt, Geo, GeoFill } from "svelte-bootstrap-icons"
     import ToggleButton from "./UI/ToggleButton.svelte"
+    import NotificationBox from "./UI/NotificationBox.svelte"
 
     let unit = "m"
 
@@ -78,10 +79,7 @@
             <div class="panel-left" />
             <div class="panel-middle">
                 {#if displayNotification }
-                    <div class="notification-box">
-                        <h2>Testing</h2>
-                        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dignissimos aut temporibus a sunt, voluptates enim quod maxime dolore sint placeat laborum hic illo nobis. Pariatur excepturi deleniti sed tempore modi?</p>
-                    </div>
+                    <NotificationBox />
                 {/if}
             </div>
             <div class="panel-right" class:fade-in-right={ visibilityRight } class:fade-out-right={ !visibilityRight }>
