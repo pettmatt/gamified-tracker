@@ -97,13 +97,19 @@
                 calculateNewMarkerDistance(coordinates)
             }
             else if (lineType === "track") {
-                if (trackingPolyline === null) {
-                    trackingPolyline = L.polyline(coordinates).addTo(map)
-                    map.addLayer(trackingPolyline)
-                }
-                else {
-                    trackingPolyline.addLatLng(coordinates)
-                }
+                // Possible fix to this is to get rid of if statement and to create polyline every time
+                // if (trackingPolyline === null) {
+                //     trackingPolyline = L.polyline(coordinates).addTo(map)
+                //     map.addLayer(trackingPolyline)
+                // }
+                // else {
+                //     // Creates "Uncaught TypeError: latlng is null" error
+                //     trackingPolyline.addLatLng(coordinates)
+                // }
+
+                // This will be the fix to the issue pointed above, for now.
+                trackingPolyline = L.polyline(coordinates).addTo(map)
+                map.addLayer(trackingPolyline)
 
                 calculateNewTraveledDistance(coordinates)
             }
@@ -135,8 +141,15 @@
         let trackingInterval = null
 
         sessionStartStatus.subscribe(trackingValue => {
-            console.log("VALUEs",trackingValue)
+            // Check if user has activated tracking through clicking on an element.
             if (trackingValue) {
+                if (!navigator.permissions) {
+                    console.warn("Browser doesn't support geolocating user.")
+                    return
+                }
+
+                console.log("Starting geotracking")
+
                 map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true })
 
                 map.on("locationfound", (e: any) => {
@@ -162,14 +175,17 @@
                 clearTrackingHistory(map)
                 clearTimeout(trackingInterval)
                 trackingInterval = null
+                console.log("Cleaning and stopping geotracking")
             }
         })
 
-        const trackUser = (e: any) => {            
+        const trackUser = (e: any) => {
             // Sometimes the hook is unable to provide coordinates.
-            if (e.latlng === null) return
-            console.log("User coordinates", e)
-            
+            if (e === null || e.latlng === undefined) {
+                console.log("No coordinates found. Skipping this iteration.")
+                return
+            }
+
             const radius = e.accuracy
 
             // Ignore possible error created by "setLatLng" method. 
@@ -224,8 +240,8 @@
             }
         })
 
-        console.log("markers:", markercount)
-        console.log("polylines:", polylineCount)
+        console.log("Markers:", markercount)
+        console.log("Polylines:", polylineCount)
     }
 </script>
 
