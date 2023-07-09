@@ -1,5 +1,16 @@
 <script lang="ts">
+    import { getItemFromLocalStorage, addItemToLocalStorage } from "../services/localStorage-service"
+    import { settings } from "../stores/hud-store"
 
+    let appSettings: Object
+    settings.subscribe(settingsObject => {
+        appSettings = settingsObject
+    })
+    console.log("Application settings:", appSettings)
+
+    const onInputChange = (e) => {
+
+    }
 </script>
 
 <div id="settings-box">
@@ -10,7 +21,7 @@
             <h3>Menus</h3>
             <ul>
                 Display
-                <li>Fade top display bar on idle <input type="checkbox" /></li>
+                <li>Fade top display bar on idle <input type="checkbox" on:change={ onInputChange } /></li>
                 <li>Fade right menu on idle <input type="checkbox" /></li>
                 <li>Fade bottom menu on idle <input type="checkbox" /></li>
             </ul>
