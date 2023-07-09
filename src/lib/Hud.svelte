@@ -1,9 +1,10 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte"
-    import { sessionStartStatus, traveledDistance, placeMarkersStatus } from "../stores/hud-store"
-    import { GeoAltFill, GeoAlt, Geo, GeoFill } from "svelte-bootstrap-icons"
+    import { sessionStartStatus, traveledDistance, placeMarkersStatus, settingsStatus } from "../stores/hud-store"
+    import { GeoAltFill, GeoAlt, Geo, GeoFill, Gear, GearFill } from "svelte-bootstrap-icons"
     import ToggleButton from "./UI/ToggleButton.svelte"
     import NotificationBox from "./UI/NotificationBox.svelte"
+    import Settings from "./Settings.svelte"
 
     let unit = "m"
 
@@ -81,6 +82,10 @@
                 {#if displayNotification}
                     <NotificationBox />
                 {/if}
+
+                {#if $settingsStatus}
+                    <Settings />
+                {/if}
             </div>
             <div class="panel-right" class:fade-in-right={ visibilityRight } class:fade-out-right={ !visibilityRight }>
                 <button on:click={ () => visibilityTop = !visibilityTop }>Top</button>
@@ -90,6 +95,7 @@
         <div class="panel-bottom" class:fade-in-bottom={ visibilityBottom } class:fade-out-bottom={ !visibilityBottom }>
             <ToggleButton label="Start" icons={ { default: Geo, checked: GeoFill } } value={ $sessionStartStatus } store={ sessionStartStatus } />
             <ToggleButton label="Plan" icons={ { default: GeoAlt, checked: GeoAltFill } } value={ $placeMarkersStatus } store={ placeMarkersStatus } />
+            <ToggleButton label="Settings" icons={ { default: Gear, checked: GearFill } } value={ $settingsStatus } store={ settingsStatus } />
         </div>
     </div>
 </div>
