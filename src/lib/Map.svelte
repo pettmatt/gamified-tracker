@@ -263,7 +263,7 @@
     const checkIfFinished = () => {
         if (waypointMarkers.length === totalDistances.traveled.markersPassed.length) {
             console.log(`You have finished your planned session.`)
-            console.log(`Do you want to continue with free roaming?`)
+            console.log(`Do you want to continue to free roaming?`)
         }
     }
 
