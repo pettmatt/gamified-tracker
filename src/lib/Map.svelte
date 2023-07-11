@@ -13,6 +13,7 @@
             getSum: Function
         },
         traveled: {
+            markersPassed: Array<object>
             sum: number
         },
     }
@@ -33,6 +34,7 @@
             }
         },
         traveled: {
+            markersPassed: [],
             sum: 0
         }
     }
@@ -78,7 +80,6 @@
             }
 
             map.addLayer(marker)
-
         }
 
         map.on("click", ($event: any) => {
@@ -195,6 +196,7 @@
 
             trackingCoordinates.push(currentLocation.getLatLng())
             drawLine(trackingCoordinates, "track")
+            compareLocationWithNextMarker()
         }
 
         return map
@@ -227,6 +229,42 @@
 
     const hidePlanningMarkers = () => {
 
+    }
+
+    const compareLocationWithNextMarker = () => {
+        if (waypointMarkers.length === 0) {
+            console.log("No markers placed. Skipping next marker detection.")
+            return
+        }
+
+        const locationCoordinates: Object = currentLocation.getLatLng()
+        const markersPassed: number = totalDistances.traveled.markersPassed.length
+
+        if (waypointMarkers.length === markersPassed) {
+            console.log("There's no more set markers. Session already ended.")
+            return
+        }
+
+        const nextMarker: Object = waypointMarkers[markersPassed].getLatLng()
+
+        let distanceToNextMarker = locationCoordinates.distanceTo(nextMarker)
+        distanceToNextMarker = (distanceToNextMarker / 1000).toFixed(2)
+        
+        console.log(`Next marker is ${ distanceToNextMarker } ${ "km" } away`)
+
+        if (distanceToNextMarker < 0.05) {
+            console.log(`You have reached the waypoint ${ markersPassed + 1 } out of ${ waypointMarkers.length }.`)
+
+            totalDistances.traveled.markersPassed.push(nextMarker)
+            checkIfFinished()
+        }
+    }
+
+    const checkIfFinished = () => {
+        if (waypointMarkers.length === totalDistances.traveled.markersPassed.length) {
+            console.log(`You have finished your planned session.`)
+            console.log(`Do you want to continue with free roaming?`)
+        }
     }
 
     const checkLayers = () => {
