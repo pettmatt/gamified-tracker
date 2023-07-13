@@ -25,7 +25,6 @@
         else console.log("Input type", event.target.type)
         
         inputDetails.name = event.target.name
-
         addItemToLocalStorage(inputDetails.name, inputDetails.value)
     }
 </script>

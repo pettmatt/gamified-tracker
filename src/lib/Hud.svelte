@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte"
-    import { sessionStartStatus, traveledDistance, placeMarkersStatus, settingsStatus } from "../stores/hud-store"
-    import { GeoAltFill, GeoAlt, Geo, GeoFill, Gear, GearFill } from "svelte-bootstrap-icons"
+    import { sessionStartStatus, traveledDistance, placeMarkersStatus, settingsStatus, historyStatus, highscoresStatus } from "../stores/hud-store"
+    import { Trophy, TrophyFill, Archive, ArchiveFill, Geo, GeoFill, Gear, GearFill } from "svelte-bootstrap-icons"
     import ToggleButton from "./UI/ToggleButton.svelte"
     import NotificationBox from "./UI/NotificationBox.svelte"
     import Settings from "./Settings.svelte"
@@ -87,14 +87,14 @@
                     <Settings />
                 {/if}
             </div>
-            <div class="panel-right" class:fade-in-right={ visibilityRight } class:fade-out-right={ !visibilityRight }>
-                <button on:click={ () => visibilityTop = !visibilityTop }>Top</button>
-                <button on:click={ () => visibilityBottom = !visibilityBottom }>Bot</button>
+            <div class="panel-right">
             </div>
         </div>
         <div class="panel-bottom" class:fade-in-bottom={ visibilityBottom } class:fade-out-bottom={ !visibilityBottom }>
+            <ToggleButton label="History" icons={ { default: Archive, checked: ArchiveFill } } value={ $historyStatus } store={ historyStatus } />
+            <ToggleButton label="Highscores" icons={ { default: Trophy, checked: TrophyFill } } value={ $highscoresStatus } store={ highscoresStatus } />
             <ToggleButton label="Start" icons={ { default: Geo, checked: GeoFill } } value={ $sessionStartStatus } store={ sessionStartStatus } />
-            <ToggleButton label="Plan" icons={ { default: GeoAlt, checked: GeoAltFill } } value={ $placeMarkersStatus } store={ placeMarkersStatus } />
+            <!-- <ToggleButton label="Plan" icons={ { default: GeoAlt, checked: GeoAltFill } } value={ $placeMarkersStatus } store={ placeMarkersStatus } /> -->
             <ToggleButton label="Settings" icons={ { default: Gear, checked: GearFill } } value={ $settingsStatus } store={ settingsStatus } />
         </div>
     </div>
@@ -133,10 +133,6 @@
         text-align: center;
         color: #000;
     }
-    #interface-hud .panel-top h1 {
-        margin: 0;
-        font-size: 2.5rem;
-    }
 
     #interface-hud .panel-right,
     #interface-hud .panel-left {
@@ -160,13 +156,6 @@
 
     #interface-hud .panel-middle {
         flex: 1 1 auto;
-    }
-
-    #interface-hud .panel-top button,
-    #interface-hud .panel-bottom button,
-    #interface-hud .panel-center button,
-    #interface-hud .panel-right button {
-        pointer-events: all;
     }
 
     #travel-distance-container {
@@ -202,20 +191,6 @@
     .fade-in-bottom {
         opacity: 1;
         transform: translateY(0%);
-        transition:
-            opacity 0.3s ease-in-out,
-            transform 0.5s ease-in-out;
-    }
-    .fade-out-right{
-        opacity: 0;
-        transform: translateX(50%);
-        transition:
-            opacity 0.3s ease-in-out,
-            transform 0.5s ease-in-out;
-    }
-    .fade-in-right {
-        opacity: 1;
-        transform: translateX(0%);
         transition:
             opacity 0.3s ease-in-out,
             transform 0.5s ease-in-out;

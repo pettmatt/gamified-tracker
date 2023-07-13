@@ -3,6 +3,8 @@ import { getItemFromLocalStorage } from "../services/localStorage-service"
 
 export let sessionStartStatus = writable(false)
 export let placeMarkersStatus = writable(false)
+export let highscoresStatus = writable(false)
+export let historyStatus = writable(false)
 export let traveledDistance = writable(0)
 
 export let settingsStatus = writable(false)
@@ -20,7 +22,8 @@ export let settings = writable({
     },
     appFunctionality: {
         general: {
-            offlineMode: getItemFromLocalStorage("offlineMode")
+            offlineMode: getItemFromLocalStorage("offlineMode"),
+            units: "metric" || "imperial"
         },
         services: {
             allowThirdPartyServices: getItemFromLocalStorage("allowThirdPartyServices")
