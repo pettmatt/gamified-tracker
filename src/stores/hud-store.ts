@@ -1,10 +1,12 @@
 import { writable } from "svelte/store"
 import { getItemFromLocalStorage } from "../services/localStorage-service"
 
+export let settingUpSessionStatus = writable(false)
 export let sessionStartStatus = writable(false)
 export let placeMarkersStatus = writable(false)
 export let highscoresStatus = writable(false)
 export let historyStatus = writable(false)
+
 export let traveledDistance = writable(0)
 
 export let settingsStatus = writable(false)

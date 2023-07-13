@@ -1,10 +1,9 @@
 <script lang="ts">
-    export let htmlContent: string = "<h2 class='header'>Header</h2><p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dignissimos aut temporibus a sunt, voluptates enim quod maxime dolore sint placeat laborum hic illo nobis. Pariatur excepturi deleniti sed tempore modi?</p>" 
 </script>
 
 <main>
     <div id="notification-box">
-        { @html htmlContent }
+        <slot name="component" />
     </div>
 </main>
 

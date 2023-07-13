@@ -1,20 +1,19 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte"
-    import { sessionStartStatus, traveledDistance, placeMarkersStatus, settingsStatus, historyStatus, highscoresStatus } from "../stores/hud-store"
+    import { sessionStartStatus, traveledDistance, placeMarkersStatus, settingsStatus, historyStatus, highscoresStatus, settingUpSessionStatus } from "../stores/hud-store"
     import { Trophy, TrophyFill, Archive, ArchiveFill, Geo, GeoFill, Gear, GearFill } from "svelte-bootstrap-icons"
     import ToggleButton from "./UI/ToggleButton.svelte"
     import NotificationBox from "./UI/NotificationBox.svelte"
     import Settings from "./UI/Settings.svelte"
+    import SettingUpSession from "./UI/SettingUpSession.svelte";
 
     let unit = "m"
 
-    let displayNotification: boolean
     let visibilityTop: boolean
     let visibilityBottom: boolean
     let inActivity: any
 
     onMount(() => {
-        displayNotification = false
         visibilityTop = false
         visibilityBottom = true
 
@@ -61,6 +60,17 @@
     const showUIElements = () => {
         visibilityBottom = true
     }
+
+    
+    settingUpSessionStatus.subscribe(settingUpBoolean => {
+        // Used to setting up the session and hand 
+        // over the control of the setup phase
+        let enteredSetupMode = false
+
+        if (settingUpBoolean) {
+            enteredSetupMode = true
+        }
+    })
 </script>
 
 <div id="interface-hud">
@@ -75,8 +85,12 @@
         <div class="middle-section-panels">
             <div class="panel-left" />
             <div class="panel-middle">
-                {#if displayNotification}
-                    <NotificationBox />
+                {#if $settingUpSessionStatus}
+                    <NotificationBox>
+                        <div slot="component">
+                            <SettingUpSession />
+                        </div>
+                    </NotificationBox>
                 {/if}
 
                 {#if $settingsStatus}
@@ -84,17 +98,21 @@
                 {/if}
 
                 {#if $historyStatus}
-                    <NotificationBox htmlContent={`
-                        <h2>History</h2>
-                        <div>List of previous sessions</div>
-                    `} />
+                    <NotificationBox>
+                        <div slot="component">
+                            <h2>History</h2>
+                            <div>List of previous sessions</div>
+                        </div>
+                    </NotificationBox>
                 {/if}
 
                 {#if $highscoresStatus}
-                    <NotificationBox htmlContent={`
-                        <h2>Highscore</h2>
-                        <div>Top 10 list of previous sessions</div>
-                    `} />
+                    <NotificationBox>
+                        <div slot="component">
+                            <h2>Highscore</h2>
+                            <div>Top 10 list of previous sessions</div>
+                        </div>
+                    </NotificationBox>
                 {/if}
             </div>
             <div class="panel-right">
@@ -103,7 +121,7 @@
         <div class="panel-bottom" class:fade-in-bottom={ visibilityBottom } class:fade-out-bottom={ !visibilityBottom }>
             <ToggleButton label="History" icons={ { default: Archive, checked: ArchiveFill } } value={ $historyStatus } store={ historyStatus } />
             <ToggleButton label="Highscores" icons={ { default: Trophy, checked: TrophyFill } } value={ $highscoresStatus } store={ highscoresStatus } />
-            <ToggleButton label="Start" icons={ { default: Geo, checked: GeoFill } } value={ $sessionStartStatus } store={ sessionStartStatus } />
+            <ToggleButton label="Start" icons={ { default: Geo, checked: GeoFill } } value={ $settingUpSessionStatus } store={ settingUpSessionStatus } />
             <!-- <ToggleButton label="Plan" icons={ { default: GeoAlt, checked: GeoAltFill } } value={ $placeMarkersStatus } store={ placeMarkersStatus } /> -->
             <ToggleButton label="Settings" icons={ { default: Gear, checked: GearFill } } value={ $settingsStatus } store={ settingsStatus } />
         </div>

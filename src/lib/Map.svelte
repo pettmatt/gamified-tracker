@@ -1,5 +1,4 @@
 <script lang="ts">
-    import icon from "../assets/svelte.svg"
     import * as L from "leaflet"
     import "leaflet/dist/leaflet.css"
     import { placeMarkersStatus, sessionStartStatus, traveledDistance } from "../stores/hud-store"
