@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { getItemFromLocalStorage, addItemToLocalStorage } from "../services/localStorage-service"
-    import { settings } from "../stores/hud-store"
+    import { getItemFromLocalStorage, addItemToLocalStorage } from "../../services/localStorage-service"
+    import { settings } from "../../stores/hud-store"
 
     let appSettings: Object
 

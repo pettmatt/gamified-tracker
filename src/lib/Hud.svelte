@@ -4,20 +4,18 @@
     import { Trophy, TrophyFill, Archive, ArchiveFill, Geo, GeoFill, Gear, GearFill } from "svelte-bootstrap-icons"
     import ToggleButton from "./UI/ToggleButton.svelte"
     import NotificationBox from "./UI/NotificationBox.svelte"
-    import Settings from "./Settings.svelte"
+    import Settings from "./UI/Settings.svelte"
 
     let unit = "m"
 
     let displayNotification: boolean
     let visibilityTop: boolean
-    let visibilityRight: boolean
     let visibilityBottom: boolean
     let inActivity: any
 
     onMount(() => {
         displayNotification = false
         visibilityTop = false
-        visibilityRight = true
         visibilityBottom = true
 
         addInactivityTimers()
@@ -57,12 +55,10 @@
     }
 
     const hideUIElements = () => {
-        visibilityRight = false
         visibilityBottom = false
     }
     
     const showUIElements = () => {
-        visibilityRight = true
         visibilityBottom = true
     }
 </script>
@@ -85,6 +81,20 @@
 
                 {#if $settingsStatus}
                     <Settings />
+                {/if}
+
+                {#if $historyStatus}
+                    <NotificationBox htmlContent={`
+                        <h2>History</h2>
+                        <div>List of previous sessions</div>
+                    `} />
+                {/if}
+
+                {#if $highscoresStatus}
+                    <NotificationBox htmlContent={`
+                        <h2>Highscore</h2>
+                        <div>Top 10 list of previous sessions</div>
+                    `} />
                 {/if}
             </div>
             <div class="panel-right">
