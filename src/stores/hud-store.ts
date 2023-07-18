@@ -1,16 +1,25 @@
 import { writable } from "svelte/store"
 import { getItemFromLocalStorage } from "../services/localStorage-service"
 
-export let settingUpSessionStatus = writable(false)
-export let sessionStartStatus = writable(false)
-export let placeMarkersStatus = writable(false)
-export let highscoresStatus = writable(false)
-export let historyStatus = writable(false)
+// Booleans
+export const settingUpSessionStatus = writable(false)
+export const sessionStartStatus = writable(false)
+export const placeMarkersStatus = writable(false)
+export const highscoresStatus = writable(false)
+export const historyStatus = writable(false)
 
-export let traveledDistance = writable(0)
+// Numeric
+export const traveledDistance = writable(0)
 
-export let settingsStatus = writable(false)
-export let settings = writable({
+// Functions
+export const removeMarkersFunction = writable({ func: undefined, parameters: [] })
+export const createLoopFunction = writable({ func: undefined, parameters: [] })
+export const createRouteFunction = writable({ func: undefined, parameters: [] })
+export const removeLastMarker = writable({ func: undefined, parameters: [] })
+
+// Settings
+export const settingsStatus = writable(false)
+export const settings = writable({
     menus: {
         display: {
             fadeTopOnIdle: getItemFromLocalStorage("fadeTopOnIdle"),
@@ -19,13 +28,13 @@ export let settings = writable({
         },
         functionality: {
             enableIdle: getItemFromLocalStorage("fadeBottomOnIdle"),
-            idleTimer: getItemFromLocalStorage("idleTimer") || 10
+            idconstimer: getItemFromLocalStorage("idconstimer") || 10
         }
     },
     appFunctionality: {
         general: {
             offlineMode: getItemFromLocalStorage("offlineMode"),
-            units: "metric" || "imperial"
+            units: { name: "metric", unit: "m"} || { name: "imperial", unit: ""}
         },
         services: {
             allowThirdPartyServices: getItemFromLocalStorage("allowThirdPartyServices")

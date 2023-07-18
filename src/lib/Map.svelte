@@ -1,8 +1,9 @@
 <script lang="ts">
     import * as L from "leaflet"
     import "leaflet/dist/leaflet.css"
-    import { placeMarkersStatus, sessionStartStatus, traveledDistance } from "../stores/hud-store"
+    import { placeMarkersStatus, removeMarkersFunction, sessionStartStatus, traveledDistance } from "../stores/hud-store"
     import * as LeafletRouting from "../services/leaflet-routing-machine"
+    import { Mastodon } from "svelte-bootstrap-icons";
 
     let map: any
 
@@ -17,11 +18,19 @@
         },
     }
 
+    interface Waypoints {
+        coordinates: Array<Array<number>>,
+        markers: Array<Array<number>>,
+        polyline: any
+    }
+
+    let waypointDetails: Waypoints = {
+        coordinates: [],
+        markers: [],
+        polyline: null
+    }
     let currentLocation: Array<number> = []
-    let waypointMarkers: Array<Array<number>> = []
-    let waypointCoordinates: Array<Array<number>> = []
     let trackingCoordinates: Array<Array<number>> = []
-    let plannedPolyline: any = null
     let trackingPolyline: any = null
     let plannedRouting: any = null
     let totalDistances: DistanceProvider = {
@@ -53,15 +62,15 @@
         const placeMarker = (e: any) => {
             const marker = L.marker()
             const coordinates = e.latlng
-        
-            waypointCoordinates.push(coordinates) // Used to get easily the coordinates
-            waypointMarkers.push(marker) // Used to get easy access to the markers
-            
-            drawLine(waypointCoordinates, "plan")
+
+            waypointDetails.coordinates.push(coordinates) // Used to get easily the coordinates
+            waypointDetails.markers.push(marker) // Used to get easy access to the markers
+
+            drawLine(waypointDetails.coordinates, "plan")
             // closeTheRoute(waypointCoordinates)
 
             let markerDistances = totalDistances.planned.markerDistances
-            
+
             marker.setLatLng(coordinates, { draggable: true }).addTo(map)
 
             if (markerDistances.length < 1) {
@@ -91,9 +100,9 @@
 
             // Reset polyline, so the previous values won't become a problem
             if (lineType === "plan") {
-                plannedRouting = LeafletRouting.createRoute(L, map, plannedRouting, coordinates)
-                plannedPolyline = L.polyline(coordinates).addTo(map)
-                map.addLayer(plannedPolyline)
+                // plannedRouting = LeafletRouting.createRoute(L, map, plannedRouting, coordinates)
+                waypointDetails.polyline = L.polyline(coordinates).addTo(map)
+                map.addLayer(waypointDetails.polyline)
                 calculateNewMarkerDistance(coordinates)
             }
             else if (lineType === "track") {
@@ -133,8 +142,10 @@
 
         const closeTheRoute = (coordinates: Array<Array<number>>) => {
             // Makes the route "loopable", bringing the user back to the starting point.
-            if (coordinates.length > 2)
-                plannedPolyline = L.polyline([...coordinates, coordinates[0]]).addTo(map)
+            if (coordinates.length > 2) {
+                waypointDetails.polyline = L.polyline([...coordinates, coordinates[0]]).addTo(map)
+                
+            }
         }
 
         // Locate user
@@ -222,6 +233,20 @@
         trackingCoordinates = []
     }
 
+    const clearMapMarkersAndPolylines = () => {
+        map.eachLayer((layer: any) => {
+            if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+                map.removeLayer(layer)
+            }
+        })
+
+        waypointDetails = {
+            coordinates: [],
+            markers: [],
+            polyline: null
+        }
+    }
+
     const showPlanningMarkers = () => {
 
     }
@@ -230,8 +255,12 @@
 
     }
 
+    const createLefletRouting = (Leaflet, map, plannedRouting, coordinates) => {
+        return LeafletRouting.createRoute(Leaflet, map, plannedRouting, coordinates)
+    }
+
     const compareLocationWithNextMarker = () => {
-        if (waypointMarkers.length === 0) {
+        if (waypointDetails.markers.length === 0) {
             console.log("No markers placed. Skipping next marker detection.")
             return
         }
@@ -239,12 +268,12 @@
         const locationCoordinates: Object = currentLocation.getLatLng()
         const markersPassed: number = totalDistances.traveled.markersPassed.length
 
-        if (waypointMarkers.length === markersPassed) {
+        if (waypointDetails.markers.length === markersPassed) {
             console.log("There's no more set markers. Session already ended.")
             return
         }
 
-        const nextMarker: Object = waypointMarkers[markersPassed].getLatLng()
+        const nextMarker: Object = waypointDetails.markers[markersPassed].getLatLng()
 
         let distanceToNextMarker = locationCoordinates.distanceTo(nextMarker)
         distanceToNextMarker = (distanceToNextMarker / 1000).toFixed(2)
@@ -252,7 +281,7 @@
         console.log(`Next marker is ${ distanceToNextMarker } ${ "km" } away`)
 
         if (distanceToNextMarker < 0.05) {
-            console.log(`You have reached the waypoint ${ markersPassed + 1 } out of ${ waypointMarkers.length }.`)
+            console.log(`You have reached the waypoint ${ markersPassed + 1 } out of ${ waypointDetails.markers.length }.`)
 
             totalDistances.traveled.markersPassed.push(nextMarker)
             checkIfFinished()
@@ -260,7 +289,7 @@
     }
 
     const checkIfFinished = () => {
-        if (waypointMarkers.length === totalDistances.traveled.markersPassed.length) {
+        if (waypointDetails.markers.length === totalDistances.traveled.markersPassed.length) {
             console.log(`You have finished your planned session.`)
             console.log(`Do you want to continue to free roaming?`)
         }
@@ -280,6 +309,12 @@
         console.log("Markers:", markercount)
         console.log("Polylines:", polylineCount)
     }
+
+    // Pass functions that need map parameters through hud-store.
+    removeMarkersFunction.set({
+        func: () => clearMapMarkersAndPolylines(),
+        parameters: []
+    })
 </script>
 
 <svelte:window on:resize={resizeMap} />

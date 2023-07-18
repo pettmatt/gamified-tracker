@@ -6,6 +6,7 @@
     import NotificationBox from "./UI/NotificationBox.svelte"
     import Settings from "./UI/Settings.svelte"
     import SettingUpSession from "./UI/SettingUpSession.svelte"
+    import PlaceMarkersMenu from "./UI/PlaceMarkersMenu.svelte"
 
     let unit = "m"
 
@@ -88,10 +89,19 @@
                 {#if $settingUpSessionStatus}
                     <NotificationBox>
                         <div slot="component">
-                            <SettingUpSession />
+                            
+                            {#if $placeMarkersStatus}
+                                <!-- Why is this menu element here and not in the "else if" clause?
+                                With this setup the placeMarkers menu will override the settings menu when needed -->
+                                <PlaceMarkersMenu />
+
+                                {:else if !$placeMarkersStatus}
+                                    <SettingUpSession />
+                            {/if}
                         </div>
                     </NotificationBox>
                 {/if}
+
 
                 {#if $settingsStatus}
                     <Settings />

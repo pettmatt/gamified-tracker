@@ -30,7 +30,7 @@
     </select>
 </div>
 <div>
-    Plan your route <button on:click={ planSessionRoute }>{ $placeMarkersStatus ? "Plan" : "Done"}</button>
+    Plan your route <button on:click={ planSessionRoute }>Plan</button>
 </div>
 <div>
     Specify session length goals <input type="checkbox" name="SpecifySessionLength" on:change={ handleOnChange } />
