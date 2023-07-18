@@ -5,7 +5,7 @@
     import ToggleButton from "./UI/ToggleButton.svelte"
     import NotificationBox from "./UI/NotificationBox.svelte"
     import Settings from "./UI/Settings.svelte"
-    import SettingUpSession from "./UI/SettingUpSession.svelte";
+    import SettingUpSession from "./UI/SettingUpSession.svelte"
 
     let unit = "m"
 

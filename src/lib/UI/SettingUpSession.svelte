@@ -29,8 +29,12 @@
         <option>Cycling</option>
     </select>
 </div>
-<div>Plan your route <button on:click={ planSessionRoute }>{ $placeMarkersStatus ? "Plan" : "Done"}</button></div>
-<div>Specify session length goals <input type="checkbox" name="SpecifySessionLength" on:change={ handleOnChange } /></div>
+<div>
+    Plan your route <button on:click={ planSessionRoute }>{ $placeMarkersStatus ? "Plan" : "Done"}</button>
+</div>
+<div>
+    Specify session length goals <input type="checkbox" name="SpecifySessionLength" on:change={ handleOnChange } />
+</div>
 
 {#if specifySessionLength}
     <div>Session time goal <input type="number" value="20" /> mins</div>
