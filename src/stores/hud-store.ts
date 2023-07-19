@@ -10,6 +10,8 @@ export const historyStatus = writable(false)
 
 // Numeric
 export const traveledDistance = writable(0)
+export const plannedLength = writable(0)
+export const routeLength = writable(0)
 
 // Functions
 export const removeMarkersFunction = writable(undefined)

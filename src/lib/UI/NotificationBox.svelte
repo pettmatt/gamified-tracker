@@ -1,6 +1,5 @@
 <script lang="ts">
     export let position: string = "default"
-    console.log("POSITION", position)
 </script>
 
 <main>

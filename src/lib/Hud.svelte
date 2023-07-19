@@ -68,9 +68,8 @@
         // over the control of the setup phase
         let enteredSetupMode = false
 
-        if (settingUpBoolean) {
+        if (settingUpBoolean)
             enteredSetupMode = true
-        }
     })
 </script>
 
