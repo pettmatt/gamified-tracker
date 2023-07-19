@@ -6,11 +6,10 @@
     }
 
     // Triggers the function passed by the map to hud-store
-    const triggerFunction = (storeFunction) => {
-        const { func, parameters } = storeFunction
+    const triggerFunction = (storeFunction: Function | undefined) => {
 
-        if (typeof func === "function")
-            func(...parameters)
+        if (typeof storeFunction === "function")
+            storeFunction()
     }
 
     const checkIfFunctionIsAvailable = (func: Function | undefined) => {
@@ -20,10 +19,10 @@
 
 <p>Place your markers by pressing a placement on the map</p>
 
-<button on:click={ () => triggerFunction($removeMarkersFunction) } disabled={ checkIfFunctionIsAvailable($removeMarkersFunction.func) }>Remove all markers</button>
-<button on:click={ () => triggerFunction($createLoopFunction) } disabled={ checkIfFunctionIsAvailable($createLoopFunction.func) }>Create a loop</button>
-<button on:click={ () => triggerFunction(createRouteFunction) } disabled={ checkIfFunctionIsAvailable($createRouteFunction.func) }>Generate the route</button>
-<button on:click={ () => triggerFunction(removeLastMarker) } disabled={ checkIfFunctionIsAvailable($removeLastMarker.func) }>Undo</button>
+<button on:click={ () => triggerFunction($removeMarkersFunction) } disabled={ checkIfFunctionIsAvailable($removeMarkersFunction) }>Remove all markers</button>
+<button on:click={ () => triggerFunction($createLoopFunction) } disabled={ checkIfFunctionIsAvailable($createLoopFunction) }>Create a loop</button>
+<button on:click={ () => triggerFunction(createRouteFunction) } disabled={ checkIfFunctionIsAvailable($createRouteFunction) }>Generate the route</button>
+<button on:click={ () => triggerFunction(removeLastMarker) } disabled={ checkIfFunctionIsAvailable($removeLastMarker) }>Undo</button>
 <button on:click={ planSessionRoute }>Done</button>
 
 <style>

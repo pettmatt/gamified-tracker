@@ -154,10 +154,7 @@
             }
         }
 
-        createLoopFunction.set({
-            func: () => createLoop(waypointDetails.coordinates),
-            parameters: []
-        })
+        createLoopFunction.set(() => createLoop(waypointDetails.coordinates))
 
         // Locate user
         let trackingInterval = null
@@ -326,10 +323,7 @@
 
     // Pass functions that need map parameters to hud-store.
     // When necessary the function is passed else where in this file.
-    removeMarkersFunction.set({
-        func: () => clearMapMarkersAndPolylines(),
-        parameters: []
-    })
+    removeMarkersFunction.set(() => clearMapMarkersAndPolylines())
 
 
 </script>

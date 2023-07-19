@@ -12,10 +12,10 @@ export const historyStatus = writable(false)
 export const traveledDistance = writable(0)
 
 // Functions
-export const removeMarkersFunction = writable({ func: undefined, parameters: [] })
-export const createLoopFunction = writable({ func: undefined, parameters: [] })
-export const createRouteFunction = writable({ func: undefined, parameters: [] })
-export const removeLastMarker = writable({ func: undefined, parameters: [] })
+export const removeMarkersFunction = writable(undefined)
+export const createLoopFunction = writable(undefined)
+export const createRouteFunction = writable(undefined)
+export const removeLastMarker = writable(undefined)
 
 // Settings
 export const settingsStatus = writable(false)
