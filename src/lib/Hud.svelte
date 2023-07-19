@@ -87,7 +87,7 @@
             <div class="panel-left" />
             <div class="panel-middle">
                 {#if $settingUpSessionStatus}
-                    <NotificationBox>
+                    <NotificationBox position={ $placeMarkersStatus ? "top" : "default" }>
                         <div slot="component">
                             
                             {#if $placeMarkersStatus}

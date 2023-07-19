@@ -1,8 +1,10 @@
 <script lang="ts">
+    export let position: string = "default"
+    console.log("POSITION", position)
 </script>
 
 <main>
-    <div id="notification-box">
+    <div id="notification-box" class={ position }>
         <slot name="component" />
     </div>
 </main>
@@ -12,7 +14,6 @@
         border-radius: 0.5em;
         display: flex;
         flex-direction: column;
-        margin: auto;
         padding: 0.5em 1em;
         max-width: 700px;
         max-height: 100%;
@@ -23,5 +24,11 @@
     }
     #notification-box {
         pointer-events: all;
+    }
+    .default {
+        margin: auto;
+    }
+    .top {
+        margin: 0 auto auto auto;
     }
 </style>

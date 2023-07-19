@@ -13,17 +13,15 @@
             func(...parameters)
     }
 
-    const checkIfFunctionIsAvailable = (func) => {
+    const checkIfFunctionIsAvailable = (func: Function | undefined) => {
         return typeof func === "function" ? false : true
     }
-
-    console.log("REMOVE MARKERS FUNCTIOn", $removeMarkersFunction.func)
 </script>
 
 <p>Place your markers by pressing a placement on the map</p>
 
 <button on:click={ () => triggerFunction($removeMarkersFunction) } disabled={ checkIfFunctionIsAvailable($removeMarkersFunction.func) }>Remove all markers</button>
-<button on:click={ () => triggerFunction(createLoopFunction) } disabled={ checkIfFunctionIsAvailable($createLoopFunction.func) }>Link the first and the final marker</button>
+<button on:click={ () => triggerFunction($createLoopFunction) } disabled={ checkIfFunctionIsAvailable($createLoopFunction.func) }>Create a loop</button>
 <button on:click={ () => triggerFunction(createRouteFunction) } disabled={ checkIfFunctionIsAvailable($createRouteFunction.func) }>Generate the route</button>
 <button on:click={ () => triggerFunction(removeLastMarker) } disabled={ checkIfFunctionIsAvailable($removeLastMarker.func) }>Undo</button>
 <button on:click={ planSessionRoute }>Done</button>

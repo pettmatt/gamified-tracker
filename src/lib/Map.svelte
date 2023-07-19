@@ -1,7 +1,7 @@
 <script lang="ts">
     import * as L from "leaflet"
     import "leaflet/dist/leaflet.css"
-    import { placeMarkersStatus, removeMarkersFunction, sessionStartStatus, traveledDistance } from "../stores/hud-store"
+    import { createLoopFunction, placeMarkersStatus, removeMarkersFunction, sessionStartStatus, traveledDistance } from "../stores/hud-store"
     import * as LeafletRouting from "../services/leaflet-routing-machine"
     import { Mastodon } from "svelte-bootstrap-icons";
 
@@ -23,15 +23,22 @@
         markers: Array<Array<number>>,
         polyline: any
     }
+    interface UserTracking {
+        currentLocation: Array<number>,
+        coordinates: Array<Array<number>>,
+        polyline: any
+    }
 
     let waypointDetails: Waypoints = {
         coordinates: [],
         markers: [],
         polyline: null
     }
-    let currentLocation: Array<number> = []
-    let trackingCoordinates: Array<Array<number>> = []
-    let trackingPolyline: any = null
+    let userTracking: UserTracking = {
+        currentLocation: [],
+        coordinates: [],
+        polyline: null
+    }
     let plannedRouting: any = null
     let totalDistances: DistanceProvider = {
         planned: {
@@ -63,7 +70,7 @@
             const marker = L.marker()
             const coordinates = e.latlng
 
-            waypointDetails.coordinates.push(coordinates) // Used to get easily the coordinates
+            waypointDetails.coordinates.push(coordinates) // Used to get the coordinates easily
             waypointDetails.markers.push(marker) // Used to get easy access to the markers
 
             drawLine(waypointDetails.coordinates, "plan")
@@ -117,8 +124,8 @@
                 // }
 
                 // This will be the fix to the issue pointed above, for now.
-                trackingPolyline = L.polyline(coordinates).addTo(map)
-                map.addLayer(trackingPolyline)
+                userTracking.polyline = L.polyline(coordinates).addTo(map)
+                map.addLayer(userTracking.polyline)
 
                 calculateNewTraveledDistance(coordinates)
             }
@@ -140,13 +147,17 @@
             traveledDistance.update(value => totalDistances.traveled.sum)
         }
 
-        const closeTheRoute = (coordinates: Array<Array<number>>) => {
+        const createLoop = (coordinates: Array<Array<number>>) => {
             // Makes the route "loopable", bringing the user back to the starting point.
             if (coordinates.length > 2) {
                 waypointDetails.polyline = L.polyline([...coordinates, coordinates[0]]).addTo(map)
-                
             }
         }
+
+        createLoopFunction.set({
+            func: () => createLoop(waypointDetails.coordinates),
+            parameters: []
+        })
 
         // Locate user
         let trackingInterval = null
@@ -164,7 +175,7 @@
                 map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true })
 
                 map.on("locationfound", (e: any) => {
-                    currentLocation = L.marker()
+                    userTracking.currentLocation = L.marker()
 
                     // Locate and show user's location immediately
                     trackUser(e)
@@ -198,14 +209,15 @@
             }
 
             const radius = e.accuracy
+            const userLocation = userTracking.currentLocation
 
             // Ignore possible error created by "setLatLng" method. 
             // Typescript error which will be fixed later.
-            currentLocation.setLatLng(e.latlng).addTo(map)
+            userLocation.setLatLng(e.latlng).addTo(map)
                 .bindPopup(`Your location is within ${ radius } meters`)
 
-            trackingCoordinates.push(currentLocation.getLatLng())
-            drawLine(trackingCoordinates, "track")
+            userTracking.coordinates.push(userLocation.getLatLng())
+            drawLine(userTracking.coordinates, "track")
             compareLocationWithNextMarker()
         }
 
@@ -226,11 +238,11 @@
     }
 
     const clearTrackingHistory = (map: any) => {
-        map.removeLayer(currentLocation)
-        map.removeLayer(trackingCoordinates)
+        map.removeLayer(userTracking.currentLocation)
+        map.removeLayer(userTracking.coordinates)
 
-        currentLocation = []
-        trackingCoordinates = []
+        userTracking.currentLocation = []
+        userTracking.coordinates = []
     }
 
     const clearMapMarkersAndPolylines = () => {
@@ -245,6 +257,8 @@
             markers: [],
             polyline: null
         }
+
+        totalDistances.planned.markerDistances = []
     }
 
     const showPlanningMarkers = () => {
@@ -265,7 +279,7 @@
             return
         }
 
-        const locationCoordinates: Object = currentLocation.getLatLng()
+        const locationCoordinates: Object = userTracking.currentLocation.getLatLng()
         const markersPassed: number = totalDistances.traveled.markersPassed.length
 
         if (waypointDetails.markers.length === markersPassed) {
@@ -310,11 +324,14 @@
         console.log("Polylines:", polylineCount)
     }
 
-    // Pass functions that need map parameters through hud-store.
+    // Pass functions that need map parameters to hud-store.
+    // When necessary the function is passed else where in this file.
     removeMarkersFunction.set({
         func: () => clearMapMarkersAndPolylines(),
         parameters: []
     })
+
+
 </script>
 
 <svelte:window on:resize={resizeMap} />
