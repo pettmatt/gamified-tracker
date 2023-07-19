@@ -1,9 +1,8 @@
 <script lang="ts">
     import * as L from "leaflet"
     import "leaflet/dist/leaflet.css"
-    import { createLoopFunction, placeMarkersStatus, removeMarkersFunction, sessionStartStatus, traveledDistance } from "../stores/hud-store"
+    import { createLoopFunction, createRouteFunction, placeMarkersStatus, removeMarkersFunction, sessionStartStatus, traveledDistance } from "../stores/hud-store"
     import * as LeafletRouting from "../services/leaflet-routing-machine"
-    import { Mastodon } from "svelte-bootstrap-icons";
 
     let map: any
 
@@ -17,7 +16,6 @@
             sum: number
         },
     }
-
     interface Waypoints {
         coordinates: Array<Array<number>>,
         markers: Array<Array<number>>,
@@ -74,7 +72,6 @@
             waypointDetails.markers.push(marker) // Used to get easy access to the markers
 
             drawLine(waypointDetails.coordinates, "plan")
-            // closeTheRoute(waypointCoordinates)
 
             let markerDistances = totalDistances.planned.markerDistances
 
@@ -107,7 +104,6 @@
 
             // Reset polyline, so the previous values won't become a problem
             if (lineType === "plan") {
-                // plannedRouting = LeafletRouting.createRoute(L, map, plannedRouting, coordinates)
                 waypointDetails.polyline = L.polyline(coordinates).addTo(map)
                 map.addLayer(waypointDetails.polyline)
                 calculateNewMarkerDistance(coordinates)
@@ -151,6 +147,9 @@
             // Makes the route "loopable", bringing the user back to the starting point.
             if (coordinates.length > 2) {
                 waypointDetails.polyline = L.polyline([...coordinates, coordinates[0]]).addTo(map)
+                // Pushing the first point again makes sure the routing plugin 
+                // displays the route correctly as a loop.
+                waypointDetails.coordinates.push(coordinates[0])
             }
         }
 
@@ -266,7 +265,7 @@
 
     }
 
-    const createLefletRouting = (Leaflet, map, plannedRouting, coordinates) => {
+    const createLeafletRouting = (Leaflet, map, plannedRouting, coordinates) => {
         return LeafletRouting.createRoute(Leaflet, map, plannedRouting, coordinates)
     }
 
@@ -324,7 +323,7 @@
     // Pass functions that need map parameters to hud-store.
     // When necessary the function is passed else where in this file.
     removeMarkersFunction.set(() => clearMapMarkersAndPolylines())
-
+    createRouteFunction.set(() => createLeafletRouting(L, map, plannedRouting, waypointDetails.coordinates))
 
 </script>
 

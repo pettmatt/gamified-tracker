@@ -21,8 +21,8 @@
 
 <button on:click={ () => triggerFunction($removeMarkersFunction) } disabled={ checkIfFunctionIsAvailable($removeMarkersFunction) }>Remove all markers</button>
 <button on:click={ () => triggerFunction($createLoopFunction) } disabled={ checkIfFunctionIsAvailable($createLoopFunction) }>Create a loop</button>
-<button on:click={ () => triggerFunction(createRouteFunction) } disabled={ checkIfFunctionIsAvailable($createRouteFunction) }>Generate the route</button>
-<button on:click={ () => triggerFunction(removeLastMarker) } disabled={ checkIfFunctionIsAvailable($removeLastMarker) }>Undo</button>
+<button on:click={ () => triggerFunction($createRouteFunction) } disabled={ checkIfFunctionIsAvailable($createRouteFunction) }>Generate the route</button>
+<button on:click={ () => triggerFunction($removeLastMarker) } disabled={ checkIfFunctionIsAvailable($removeLastMarker) }>Undo</button>
 <button on:click={ planSessionRoute }>Done</button>
 
 <style>
