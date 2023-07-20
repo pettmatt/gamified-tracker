@@ -1,8 +1,20 @@
 <script lang="ts">
-    import { createLoopFunction, createRouteFunction, placeMarkersStatus, plannedLength, removeLastMarker, removeMarkersFunction, routeLength } from "../../stores/hud-store"
+    import { createLoopFunction, createRouteFunction, sessionMarkers, placeMarkersStatus, plannedLength, removeLastMarker, removeMarkersFunction, routeLength, sessionDetails } from "../../stores/hud-store"
 
     const planSessionRoute = () => {
+        sessionDetails.update(values => ({
+            ...values,
+            goal: {
+                markers: $sessionMarkers,
+                estimatedDistance: sessionLength.estimated,
+                lengthSpecified: values.goal.lengthSpecified,
+                distance: values.goal.distance,
+                time: values.goal.distance
+            }
+        }))
+
         placeMarkersStatus.update((boolean) => !boolean)
+        console.log($sessionDetails)
     }
 
     // Triggers the function passed by the map to hud-store

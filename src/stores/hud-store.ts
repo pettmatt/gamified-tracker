@@ -2,25 +2,48 @@ import { writable } from "svelte/store"
 import { getItemFromLocalStorage } from "../services/localStorage-service"
 
 // Booleans
-export const settingUpSessionStatus = writable(false)
-export const sessionStartStatus = writable(false)
-export const placeMarkersStatus = writable(false)
-export const highscoresStatus = writable(false)
-export const historyStatus = writable(false)
+export const settingUpSessionStatus = writable<Boolean>(false)
+export const sessionStartStatus = writable<Boolean>(false)
+export const placeMarkersStatus = writable<Boolean>(false)
+export const highscoresStatus = writable<Boolean>(false)
+export const historyStatus = writable<Boolean>(false)
 
 // Numeric
-export const traveledDistance = writable(0)
-export const plannedLength = writable(0)
-export const routeLength = writable(0)
+export const traveledDistance = writable<Number>(0)
+export const plannedLength = writable<Number>(0)
+export const routeLength = writable<Number>(0)
 
 // Functions
-export const removeMarkersFunction = writable(undefined)
-export const createLoopFunction = writable(undefined)
-export const createRouteFunction = writable(undefined)
-export const removeLastMarker = writable(undefined)
+export const removeMarkersFunction = writable<Function>(undefined)
+export const createRouteFunction = writable<Function>(undefined)
+export const createLoopFunction = writable<Function>(undefined)
+export const removeLastMarker = writable<Function>(undefined)
+export const getMapStatistics = writable<Function>(undefined)
+
+// User session settings
+// These values are meant to be stored and displayed in History / Highscore menu
+export const sessionMarkers = writable(undefined)
+export const sessionDetails = writable({
+    category: undefined,
+    goal: {
+        markers: undefined,
+        estimatedDistance: undefined,
+        lengthSpecified: false,
+        distance: undefined,
+        time: undefined,
+    },
+    session: {
+        routeCoordinates: undefined,
+        markerCount: undefined,
+        passedThroughMarkers: undefined,
+        distance: undefined,
+        startingTime: undefined,
+        endTimer: undefined
+    }
+})
 
 // Settings
-export const settingsStatus = writable(false)
+export const settingsStatus = writable<Boolean>(false)
 export const settings = writable({
     menus: {
         display: {

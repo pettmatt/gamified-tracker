@@ -7,6 +7,7 @@
     import Settings from "./UI/Settings.svelte"
     import SettingUpSession from "./UI/SettingUpSession.svelte"
     import PlaceMarkersMenu from "./UI/PlaceMarkersMenu.svelte"
+    import SessionMenu from "./UI/SessionMenu.svelte";
 
     let unit = "m"
 
@@ -86,16 +87,19 @@
             <div class="panel-left" />
             <div class="panel-middle">
                 {#if $settingUpSessionStatus}
-                    <NotificationBox position={ $placeMarkersStatus ? "top" : "default" }>
+                    <NotificationBox position={ ($placeMarkersStatus || $sessionStartStatus) ? "top" : "default" }>
                         <div slot="component">
-                            
-                            {#if $placeMarkersStatus}
+                            {#if $sessionStartStatus}
+                                <SessionMenu />
+
+                            {:else if $placeMarkersStatus}
                                 <!-- Why is this menu element here and not in the "else if" clause?
                                 With this setup the placeMarkers menu will override the settings menu when needed -->
                                 <PlaceMarkersMenu />
 
-                                {:else if !$placeMarkersStatus}
-                                    <SettingUpSession />
+                            {:else if !$placeMarkersStatus}
+                                <SettingUpSession />
+
                             {/if}
                         </div>
                     </NotificationBox>
@@ -130,7 +134,7 @@
         <div class="panel-bottom" class:fade-in-bottom={ visibilityBottom } class:fade-out-bottom={ !visibilityBottom }>
             <ToggleButton label="History" icons={ { default: Archive, checked: ArchiveFill } } value={ $historyStatus } store={ historyStatus } />
             <ToggleButton label="Highscores" icons={ { default: Trophy, checked: TrophyFill } } value={ $highscoresStatus } store={ highscoresStatus } />
-            <ToggleButton label="Start" icons={ { default: Geo, checked: GeoFill } } value={ $settingUpSessionStatus } store={ settingUpSessionStatus } />
+            <ToggleButton label="Session" icons={ { default: Geo, checked: GeoFill } } value={ $settingUpSessionStatus } store={ settingUpSessionStatus } />
             <!-- <ToggleButton label="Plan" icons={ { default: GeoAlt, checked: GeoAltFill } } value={ $placeMarkersStatus } store={ placeMarkersStatus } /> -->
             <ToggleButton label="Settings" icons={ { default: Gear, checked: GearFill } } value={ $settingsStatus } store={ settingsStatus } />
         </div>

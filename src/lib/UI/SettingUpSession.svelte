@@ -1,9 +1,27 @@
 <script lang="ts">
-    import { placeMarkersStatus, sessionStartStatus, settingUpSessionStatus } from "../../stores/hud-store";
+    import { placeMarkersStatus, sessionDetails, sessionStartStatus, settingUpSessionStatus } from "../../stores/hud-store"
 
     const startSession = () => {
-        settingUpSessionStatus.update(() => false)
-        sessionStartStatus.update(() => true)
+        sessionDetails.update(values => {
+            const lengthSpecified = document.getElementsByName("SpecifySessionLength")[0].checked
+
+            return {
+                ...values,
+                category: document.getElementsByName("SessionCategory")[0].value,
+                goal: {
+                    markers: values.goal.markers,
+                    estimatedDistance: values.goal.estimatedDistance,
+                    lengthSpecified: lengthSpecified,
+                    distance: lengthSpecified ? document.getElementsByName("GoalDistance")[0].value : values.goal.distance,
+                    time: lengthSpecified ? document.getElementsByName("GoalTime")[0].value : values.goal.time
+                }
+            }
+        })
+
+        console.log($sessionDetails)
+
+        settingUpSessionStatus.set(false)
+        sessionStartStatus.set(true)
     }
 
     let specifySessionLength = false
@@ -23,10 +41,10 @@
 <h2>Setting up session</h2>
 
 <div>Sport category 
-    <select>
-        <option>Running</option>
-        <option>Walking</option>
-        <option>Cycling</option>
+    <select name="SessionCategory">
+        <option value="running">Running</option>
+        <option value="walking">Walking</option>
+        <option value="cycling">Cycling</option>
     </select>
 </div>
 <div>
@@ -37,8 +55,8 @@
 </div>
 
 {#if specifySessionLength}
-    <div>Session time goal <input type="number" value="20" /> mins</div>
-    <div>Session distance goal <input type="number" value="3" /> km</div>
+    <div>Session time goal <input type="number" name="GoalTime" value="20" /> mins</div>
+    <div>Session distance goal <input type="number" name="GoalDistance" value="3" /> km</div>
 {/if}
 
 <button on:click={ startSession }>Start the session</button>

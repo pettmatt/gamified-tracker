@@ -1,7 +1,7 @@
 <script lang="ts">
     import * as L from "leaflet"
     import "leaflet/dist/leaflet.css"
-    import { createLoopFunction, createRouteFunction, placeMarkersStatus, plannedLength, removeLastMarker, removeMarkersFunction, routeLength, sessionStartStatus, traveledDistance } from "../stores/hud-store"
+    import { createLoopFunction, createRouteFunction, sessionMarkers, placeMarkersStatus, plannedLength, removeLastMarker, removeMarkersFunction, routeLength, sessionStartStatus, traveledDistance } from "../stores/hud-store"
     import * as LeafletRouting from "../services/leaflet-routing-machine"
 
     let map: any
@@ -89,62 +89,15 @@
                     marker.bindPopup(`Distance from the previous marker is 
                     ${ (distance).toFixed(2) } meters`)
                 }
-
-                // Update the store values so the HUD can show the planned distance
-                plannedLength.set(totalDistances.planned.getSum())
             }
 
             map.addLayer(marker)
+            sessionMarkers.set(waypointDetails)
         }
 
         map.on("click", ($event: any) => {
             if ($placeMarkersStatus) placeMarker($event)
         })
-
-        // Draw a line from marker to marker
-        const drawLine = (coordinates: Array<Array<number>>, lineType: string = "plan" || "track") => {
-            if (coordinates.length < 2) return
-
-            // Reset polyline, so the previous values won't become a problem
-            if (lineType === "plan") {
-                waypointDetails.polyline = L.polyline(coordinates).addTo(map)
-                map.addLayer(waypointDetails.polyline)
-                calculateNewMarkerDistance(coordinates)
-            }
-            else if (lineType === "track") {
-                // Possible fix to this is to get rid of if statement and to create polyline every time
-                // if (trackingPolyline === null) {
-                //     trackingPolyline = L.polyline(coordinates).addTo(map)
-                //     map.addLayer(trackingPolyline)
-                // }
-                // else {
-                //     // Creates "Uncaught TypeError: latlng is null" error
-                //     trackingPolyline.addLatLng(coordinates)
-                // }
-
-                // This will be the fix to the issue pointed above, for now.
-                userTracking.polyline = L.polyline(coordinates).addTo(map)
-                map.addLayer(userTracking.polyline)
-
-                calculateNewTraveledDistance(coordinates)
-            }
-        }
-
-        const calculateNewMarkerDistance = (coordinates: Array<Array<number>>) => {
-            const distance = map.distance(
-                coordinates[totalDistances.planned.markerDistances.length],
-                coordinates[coordinates.length - 1]
-            )
-
-            totalDistances.planned.markerDistances.push(distance)
-        }
-
-        const calculateNewTraveledDistance = (coordinates: Array<Array<number>>) => {
-            const distance = map.distance(coordinates[0], coordinates[coordinates.length-1])
-            totalDistances.traveled.sum += distance
-            // Update the travel distance
-            traveledDistance.update(value => totalDistances.traveled.sum)
-        }
 
         const createLoop = (coordinates: Array<Array<number>>) => {
             // Makes the route "loopable", bringing the user back to the starting point.
@@ -153,7 +106,9 @@
                 // Pushing the first point again makes sure the routing plugin 
                 // displays the route correctly as a loop.
                 waypointDetails.coordinates.push(coordinates[0])
+                calculateNewLineLength(waypointDetails.coordinates)
             }
+
         }
 
         createLoopFunction.set(() => createLoop(waypointDetails.coordinates))
@@ -161,9 +116,9 @@
         // Locate user
         let trackingInterval = null
 
-        sessionStartStatus.subscribe(trackingValue => {
+        sessionStartStatus.subscribe(sessionStarted => {
             // Check if user has activated tracking through clicking on an element.
-            if (trackingValue) {
+            if (sessionStarted) {
                 if (!navigator.permissions) {
                     console.warn("The browser doesn't support geolocating the user.")
                     return
@@ -194,31 +149,12 @@
 
             else {
                 clearTrackingHistory(map)
+                clearMapMarkersAndPolylines(map)
                 clearTimeout(trackingInterval)
                 trackingInterval = null
                 console.log("Cleaning and stopping geotracking")
             }
         })
-
-        const trackUser = (e: any) => {
-            // Sometimes the hook is unable to provide coordinates.
-            if (e === null || e.latlng === undefined) {
-                console.log("No coordinates found. Skipping this iteration.")
-                return
-            }
-
-            const radius = e.accuracy
-            const userLocation = userTracking.currentLocation
-
-            // Ignore possible error created by "setLatLng" method. 
-            // Typescript error which will be fixed later.
-            userLocation.setLatLng(e.latlng).addTo(map)
-                .bindPopup(`Your location is within ${ radius } meters`)
-
-            userTracking.coordinates.push(userLocation.getLatLng())
-            drawLine(userTracking.coordinates, "track")
-            compareLocationWithNextMarker()
-        }
 
         return map
     }
@@ -236,6 +172,72 @@
         if (map) map.invalidateSize()
     }
 
+    // Draw a line from marker to marker
+    const drawLine = (coordinates: Array<Array<number>>, lineType: string = "plan" || "track") => {
+        if (coordinates.length < 2) return
+
+        // Reset polyline, so the previous values won't become a problem
+        if (lineType === "plan") {
+            waypointDetails.polyline = L.polyline(coordinates).addTo(map)
+            map.addLayer(waypointDetails.polyline)
+            calculateNewLineLength(coordinates)
+        }
+        else if (lineType === "track") {
+            // Possible fix to this is to get rid of if statement and to create polyline every time
+            // if (trackingPolyline === null) {
+            //     trackingPolyline = L.polyline(coordinates).addTo(map)
+            //     map.addLayer(trackingPolyline)
+            // }
+            // else {
+            //     // Creates "Uncaught TypeError: latlng is null" error
+            //     trackingPolyline.addLatLng(coordinates)
+            // }
+
+            // This will be the fix to the issue pointed above, for now.
+            userTracking.polyline = L.polyline(coordinates).addTo(map)
+            map.addLayer(userTracking.polyline)
+
+            calculateNewTraveledDistance(coordinates)
+        }
+    }
+
+    const trackUser = (e: any) => {
+        // Sometimes the hook is unable to provide coordinates.
+        if (e === null || e.latlng === undefined) {
+            console.log("No coordinates found. Skipping this iteration.")
+            return
+        }
+
+        const radius = e.accuracy
+
+        // Ignore possible error created by "setLatLng" method. 
+        // Typescript error which will be fixed later.
+        userTracking.currentLocation.setLatLng(e.latlng).addTo(map)
+            .bindPopup(`Your location is within ${ radius } meters`)
+
+        userTracking.coordinates.push(userTracking.currentLocation.getLatLng())
+        drawLine(userTracking.coordinates, "track")
+        compareLocationWithNextMarker()
+    }
+
+    const calculateNewLineLength = (coordinates: Array<Array<number>>) => {
+        const distance = map.distance(
+            coordinates[totalDistances.planned.markerDistances.length],
+            coordinates[coordinates.length - 1]
+        )
+
+        totalDistances.planned.markerDistances.push(distance)
+        // Update the store values so the HUD can show the planned distance
+        plannedLength.set(totalDistances.planned.getSum())
+    }
+
+    const calculateNewTraveledDistance = (coordinates: Array<Array<number>>) => {
+        const distance = map.distance(coordinates[0], coordinates[coordinates.length - 1])
+        totalDistances.traveled.sum += distance
+        // Update the travel distance
+        traveledDistance.update(value => totalDistances.traveled.sum)
+    }
+
     const clearTrackingHistory = (map: any) => {
         map.removeLayer(userTracking.currentLocation)
         map.removeLayer(userTracking.coordinates)
@@ -244,7 +246,7 @@
         userTracking.coordinates = []
     }
 
-    const clearMapMarkersAndPolylines = () => {
+    const clearMapMarkersAndPolylines = (map: any) => {
         map.eachLayer((layer: any) => {
             if (layer instanceof L.Marker || layer instanceof L.Polyline) {
                 map.removeLayer(layer)
@@ -340,9 +342,8 @@
 
     // Pass functions that need map parameters to hud-store.
     // When necessary the function is passed else where in this file.
-    removeMarkersFunction.set(() => clearMapMarkersAndPolylines())
+    removeMarkersFunction.set(() => clearMapMarkersAndPolylines(map))
     createRouteFunction.set(() => createLeafletRouting())
-
 </script>
 
 <svelte:window on:resize={resizeMap} />
