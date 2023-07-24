@@ -3,7 +3,7 @@
 import { traveledDistance } from "../stores/hud-store"
 import type { Waypoints, UserTracking, DistanceProvider } from "../interfaces/mapInterfaces"
 
-const checkIfFinished = (waypointDetails: any, totalDistances: any) => {
+const checkIfFinished = (waypointDetails: Waypoints, totalDistances: DistanceProvider) => {
     if (waypointDetails.markers.length === totalDistances.traveled.markersPassed.length) {
         console.log(`You have finished your planned session.`)
         console.log(`Do you want to continue to free roaming?`)
