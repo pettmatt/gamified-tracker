@@ -3,30 +3,10 @@
     import "leaflet/dist/leaflet.css"
     import { createLoopFunction, createRouteFunction, sessionMarkers, placeMarkersStatus, plannedLength, removeLastMarker, removeMarkersFunction, routeLength, sessionStartStatus, traveledDistance } from "../stores/hud-store"
     import * as LeafletRouting from "../services/leaflet-routing-machine"
-    import * as mapUtils from "../utils/mapUtils";
+    import * as mapUtils from "../utils/mapUtils"
+    import type { Waypoints, UserTracking, DistanceProvider } from "../interfaces/mapInterfaces"
 
     let map: any
-
-    interface DistanceProvider {
-        planned: {
-            markerDistances: Array<number>
-            getSum: Function
-        }
-        traveled: {
-            markersPassed: Array<object>
-            sum: number
-        }
-    }
-    interface Waypoints {
-        coordinates: Array<Array<number>>
-        markers: Array<Array<number>>
-        polyline: any
-    }
-    interface UserTracking {
-        currentLocation: Array<number>
-        coordinates: Array<Array<number>>
-        polyline: any
-    }
 
     let generatedRoute: any = null
     let waypointDetails: Waypoints = {
