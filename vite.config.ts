@@ -15,6 +15,28 @@ export default defineConfig({
             registerType: "autoUpdate",
             devOptions: {
                 enabled: true
+            },
+            workbox: {
+                globPatterns: ["**/*.{js,css,html,ico,png,svg}"]
+            },
+            // https://vite-pwa-org.netlify.app/guide/pwa-minimal-requirements.html
+            manifest: {
+                name: "Gamified tracker",
+                short_name: "GT",
+                description: "Gamified cardio application.",
+                theme_color: "#ffffff"
+                // icons: [
+                //     {
+                //         src: "pwa-192x192.png",
+                //         sizes: "192x192",
+                //         type: "image/png"
+                //     },
+                //     {
+                //         src: "pwa-512x512.png",
+                //         sizes: "512x512",
+                //         type: "image/png"
+                //     }
+                // ]
             }
         })
     ],
