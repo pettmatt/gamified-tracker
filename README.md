@@ -1,6 +1,6 @@
 # Gamified Tracker
 
-The application is still "a work in progress" and is aimed to be an cardio exercise application that can visualize the progress of a person. Btw. Best experience is achieved by using Firefox. Chrome works, but it has some visual issues.
+The application was scrapped in 2023 and converted to Vue in 2024. The application was meant to be cardio exercise application that can visualize the progress of a person. Because of personal use case I chose to scrap the app idea. Btw. Best experience is achieved by using Firefox. Chrome works, but it has some visual issues.
 
 ## Recommended IDE Setup
 
@@ -35,9 +35,3 @@ npm run test:unit
 ```sh
 npm run lint
 ```
-
-## Bug list
-
-**Local storage**
-
-- Local storage settings values are all converted to strings for some reason. Happened when started the project the next day. Changing the settings changed the string values to their respected types.
